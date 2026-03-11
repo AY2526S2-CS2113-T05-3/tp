@@ -57,6 +57,36 @@ public class WorkoutList {
 //		return workouts.get(idx);
 //	}
 
+	/**
+	 * Removes a workout from the list by its name.
+	 *
+	 * @param name The name of the workout to remove.
+	 * @return true if the workout was found and removed, false otherwise.
+	 */
+	public boolean removeWorkout(String name) {
+		Workout workoutToRemove = getWorkoutByName(name);
+		if (workoutToRemove != null) {
+			workouts.remove(workoutToRemove);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Removes a specific exercise from a specific workout.
+	 * * @param workoutName The name of the workout containing the exercise.
+	 * @param exerciseName The name of the exercise to remove.
+	 * @return true if successful, false if the workout or exercise was not found.
+	 */
+	public boolean removeExercise(String workoutName, String exerciseName) {
+		Workout workout = getWorkoutByName(workoutName);
+		if (workout != null) {
+			// This assumes your Workout class has a removeExercise method!
+			return workout.removeExercise(exerciseName);
+		}
+		return false;
+	}
+
 	public Workout getWorkoutByName(String name) {
 		for (Workout w : workouts) {
 			if (w.getWorkoutName().equalsIgnoreCase(name.trim())) {

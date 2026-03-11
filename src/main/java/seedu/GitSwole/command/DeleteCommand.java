@@ -9,11 +9,11 @@ import seedu.GitSwole.ui.Ui;
  * <p>
  * Supported formats:
  * <ul>
- *   <li>{@code delete w/WORKOUT} — removes the specified workout</li>
- *   <li>{@code delete e/EXERCISE w/WORKOUT} — removes the specified exercise from a workout</li>
+ * <li>{@code delete w/WORKOUT} — removes the specified workout</li>
+ * <li>{@code delete e/EXERCISE w/WORKOUT} — removes the specified exercise from a workout</li>
  * </ul>
  */
-public class DeleteCommand extends Command{
+public class DeleteCommand extends Command {
     private String arguments;
 
     /**
@@ -37,11 +37,11 @@ public class DeleteCommand extends Command{
     public void execute(WorkoutList workouts, Ui ui) throws GitSwoleException {
         // Check if the user is trying to delete an exercise (contains "e/")
         if (arguments.contains("e/")) {
-            deleteExercise(arguments);
+            deleteExercise(workouts);
         }
         // Check if the user is trying to delete a workout (contains "w/")
         else if (arguments.contains("w/")) {
-            deleteWorkout(arguments);
+            deleteWorkout(workouts);
         }
         // Handle invalid formats
         else {
@@ -53,28 +53,34 @@ public class DeleteCommand extends Command{
     /**
      * Parses the input and deletes the specified workout from the workout list.
      *
-     * @param arguments The raw argument string containing the {@code w/} prefix.
+     * @param workouts The current list of workouts.
      */
-    private static void deleteWorkout(String arguments) {
-        // Extract the workout name by removing the "w/" prefix
-        String workoutName = arguments.replace("w/", "").trim();
+    private void deleteWorkout(WorkoutList workouts) {
+        int wIndex = arguments.indexOf("w/");
+
+        // Extract the workout name by taking everything after "w/"
+        String workoutName = arguments.substring(wIndex + 2).trim();
 
         if (workoutName.isEmpty()) {
             System.out.println("Please specify the workout name. Example: delete w/push");
             return;
         }
 
-        String formattedName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+        boolean isDeleted = workouts.removeWorkout(workoutName);
 
-        System.out.println("Successfully deleted a " + formattedName + " Session!");
+        if (isDeleted) {
+            String formattedName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+            System.out.println("Successfully deleted the " + formattedName + " session!");
+        } else {
+            System.out.println("Workout '" + workoutName + "' not found!");
+        }
     }
-
     /**
      * Parses the input and deletes the specified exercise from the target workout.
      *
-     * @param arguments The raw argument string containing both {@code e/} and {@code w/} prefixes.
+     * @param workouts The current list of workouts.
      */
-    private static void deleteExercise(String arguments) {
+    private void deleteExercise(WorkoutList workouts) {
         int eIndex = arguments.indexOf("e/");
         int wIndex = arguments.indexOf("w/");
 
@@ -89,8 +95,6 @@ public class DeleteCommand extends Command{
 
         // Extract the workout name after "w/"
         String remainingArgs = arguments.substring(wIndex + 2).trim();
-
-
         String workoutName = remainingArgs.split(" ")[0];
 
         if (exerciseName.isEmpty() || workoutName.isEmpty()) {
@@ -98,7 +102,12 @@ public class DeleteCommand extends Command{
             return;
         }
 
-        System.out.println("Your exercise has been successfully deleted!");
-    }
+        boolean isDeleted = workouts.removeExercise(workoutName, exerciseName);
 
+        if (isDeleted) {
+            System.out.println("Successfully deleted '" + exerciseName + "' from '" + workoutName + "'!");
+        } else {
+            System.out.println("Could not find that exercise or workout. Please check your spelling.");
+        }
+    }
 }

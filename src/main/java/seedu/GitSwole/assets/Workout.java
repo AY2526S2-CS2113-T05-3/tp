@@ -31,6 +31,22 @@ public class Workout {
 	}
 
 	/**
+	 * Removes an exercise from this workout session by its name.
+	 *
+	 * @param exerciseName The name of the exercise to remove.
+	 * @return true if the exercise was successfully removed, false if it was not found.
+	 */
+	public boolean removeExercise(String exerciseName) {
+		for (int i = 0; i < exerciseList.size(); i++) {
+			if (exerciseList.get(i).getExerciseName().equalsIgnoreCase(exerciseName.trim())) {
+				exerciseList.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the number of exercises in this workout.
 	 *
 	 * @return The exercise count.
