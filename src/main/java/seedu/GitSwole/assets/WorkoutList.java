@@ -22,10 +22,12 @@ public class WorkoutList {
 	 * @param workout The {@link Workout} to add.
 	 */
 	public void addWorkout(Workout workout){
+		// assertions
+		assert workout != null : "Workout to add must not be null";
+		int sizeBefore = workouts.size();
 		workouts.add(workout);
+		assert workouts.size() == sizeBefore + 1 : "Workout list size should increase by 1 after add";
 	}
-
-	// TODO: delete workouts and exercises
 
 	/**
 	 * Returns the full list of workouts.
@@ -46,27 +48,19 @@ public class WorkoutList {
 	}
 
 	/**
-	 * Searches for a workout by name, case-insensitively.
-	 *
-	 * @param name The name of the workout to find.
-	 * @return The matching {@link Workout}, or {@code null} if not found.
-	 */
-//	public Workout getWorkoutByName(String name) {
-//		Workout workoutToSearch = new Workout(name);
-//		int idx = workouts.indexOf(workoutToSearch);
-//		return workouts.get(idx);
-//	}
-
-	/**
 	 * Removes a workout from the list by its name.
 	 *
 	 * @param name The name of the workout to remove.
 	 * @return true if the workout was found and removed, false otherwise.
 	 */
 	public boolean removeWorkout(String name) {
+		// assertions
+		assert name != null && !name.isBlank() : "Workout name must not be null or blank";
+		int sizeBefore = workouts.size();
 		Workout workoutToRemove = getWorkoutByName(name);
 		if (workoutToRemove != null) {
 			workouts.remove(workoutToRemove);
+			assert workouts.size() == sizeBefore - 1 : "Workout list size should decrease by 1 after remove";
 			return true;
 		}
 		return false;

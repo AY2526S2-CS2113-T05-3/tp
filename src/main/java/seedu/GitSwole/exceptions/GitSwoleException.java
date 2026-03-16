@@ -15,6 +15,7 @@ public class GitSwoleException extends Exception {
 		INCOMPLETE_COMMAND,
 		UNKNOWN_COMMAND,
 		IDX_OUTOFBOUNDS,
+		NEG_INPUT,
 		DEFAULT
 	}
 
@@ -50,6 +51,8 @@ public class GitSwoleException extends Exception {
 			return "What's " + command + " ? Invalid command. Try again...";
 		case IDX_OUTOFBOUNDS:
 			return "Workout does not exist. Try again...";
+		case NEG_INPUT:
+			return command;
 		default:
 			return "Error! Try again...";
 		}

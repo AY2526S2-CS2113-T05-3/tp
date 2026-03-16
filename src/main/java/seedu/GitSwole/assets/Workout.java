@@ -30,7 +30,11 @@ public class Workout {
 	 * @param exercise The {@link Exercise} to add.
 	 */
 	public void addExercise(Exercise exercise) {
+		// assertions
+		assert exercise != null : "Exercise to add must not be null";
+		int sizeBefore = exerciseList.size();
 		(this.exerciseList).add(exercise);
+		assert exerciseList.size() == sizeBefore + 1 : "Exercise list size should increase by 1 after add";
 	}
 
 	/**
@@ -40,6 +44,8 @@ public class Workout {
 	 * @return true if the exercise was successfully removed, false if it was not found.
 	 */
 	public boolean removeExercise(String exerciseName) {
+		// assertions
+		assert exerciseName != null && !exerciseName.isBlank() : "Exercise name must not be null or blank";
 		for (int i = 0; i < exerciseList.size(); i++) {
 			if (exerciseList.get(i).getExerciseName().equalsIgnoreCase(exerciseName.trim())) {
 				exerciseList.remove(i);
@@ -55,7 +61,11 @@ public class Workout {
 	 * @return The exercise count.
 	 */
 	public int getNumOfExercises() {
-		return exerciseList.size();
+		// assertions
+		assert exerciseList != null : "Exercise list should never be null";
+		int count = exerciseList.size();
+		assert count >= 0 : "Number of exercises cannot be negative";
+		return count;
 	}
 
 	/**

@@ -116,10 +116,37 @@ public class AddCommand extends Command {
 			logger.log(Level.WARNING, "AddExercise failed: Target workout '{0}' not found.", workoutName);
 			throw new GitSwoleException(GitSwoleException.ErrorType.IDX_OUTOFBOUNDS, workoutName);
 		}
+		// assertions
+		assert exerciseName != null && !exerciseName.isEmpty() : "Exercise name should be valid here";
+		assert targetWorkout != null : "Target workout should exist at this point";
 
 		int weight = Parser.parseOptionalInt(response, "/wt", 0);
 		int sets = Parser.parseOptionalInt(response, "/s", 0);
 		int reps = Parser.parseOptionalInt(response, "/r", 0);
+
+		if (weight < 0) {
+			throw new GitSwoleException(
+					GitSwoleException.ErrorType.NEG_INPUT,
+					"Weight cannot be negative. Usage: /wt WEIGHT (e.g. /wt 40)"
+			);
+		}
+		if (sets < 0) {
+			throw new GitSwoleException(
+					GitSwoleException.ErrorType.NEG_INPUT,
+					"Sets cannot be negative. Usage: /s SETS (e.g. /s 3)"
+			);
+		}
+		if (reps < 0) {
+			throw new GitSwoleException(
+					GitSwoleException.ErrorType.NEG_INPUT,
+					"Reps cannot be negative. Usage: /r REPS (e.g. /r 8)"
+			);
+		}
+
+		// assertions
+		assert weight >= 0 : "Parsed weight must be non-negative";
+		assert sets >= 0 : "Parsed sets must be non-negative";
+		assert reps >= 0 : "Parsed reps must be non-negative";
 
 		targetWorkout.addExercise(new Exercise(exerciseName, weight, sets, reps));
 		ui.showMessage("Your exercise has been successfully added! Looking swole g");

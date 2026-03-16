@@ -19,6 +19,12 @@ public class Exercise {
 	 * @param reps         The number of repetitions per set.
 	 */
 	public Exercise(String exerciseName, int weight, int sets, int reps) {
+		// assertions
+		assert exerciseName != null && !exerciseName.isBlank() : "Exercise name must not be null or blank";
+		assert weight >= 0 : "Weight must be non-negative";
+		assert sets >= 0 : "Sets must be non-negative";
+		assert reps >= 0 : "Reps must be non-negative";
+
 		setExerciseName(exerciseName);
 		setWeight(weight);
 		setSets(sets);

@@ -85,6 +85,7 @@ public class Parser {
 		case EXIT:
 			return new ExitCommand();
 		default:
+			assert false : "Unhandled CommandType: " + cmdType;
 			throw new GitSwoleException(GitSwoleException.ErrorType.UNKNOWN_COMMAND, command);
 		}
 	}
@@ -127,6 +128,10 @@ public class Parser {
 	 * @return The trimmed value following the flag, or {@code null} if the flag is absent or has no value.
 	 */
 	 public static String parseValue(String input, String prefix) {
+		 // assertions
+		 assert input != null : "Input string must not be null";
+		 assert prefix != null && !prefix.isBlank() : "Prefix must not be null or blank";
+
 		 String searchToken = prefix + " ";
 		 int start = -1;
 
@@ -148,6 +153,12 @@ public class Parser {
 		 }
 
 		 String value = input.substring(start, end).trim();
+
+		 // this is to check if we received "/e /w push"
+		 if (value.startsWith("/") || value.matches("[a-zA-Z]+/.*")) {
+			 return null;
+		 }
+
 		 return value.isEmpty() ? null : value;
 	 }
 
@@ -171,6 +182,10 @@ public class Parser {
 	 * @return The parsed integer value, or {@code defaultValue} if parsing fails or the flag is absent.
 	 */
 	 public static int parseOptionalInt(String input, String prefix, int defaultValue) {
+		 // assertions
+		 assert input != null : "Input string must not be null";
+		 assert prefix != null : "Prefix must not be null";
+
 		 String value = parseValue(input, prefix);
 
 		 if (value == null) {

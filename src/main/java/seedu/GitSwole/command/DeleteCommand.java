@@ -99,7 +99,7 @@ public class DeleteCommand extends Command {
 
         // Extract the workout name after "w/"
         String remainingArgs = arguments.substring(wIndex + 2).trim();
-        String workoutName = remainingArgs.split(" ")[0];
+        String workoutName = remainingArgs;
 
         if (exerciseName.isEmpty() || workoutName.isEmpty()) {
             logger.log(Level.WARNING, "DeleteExercise failed: Empty exercise ({0}) or workout ({1}) name.",
