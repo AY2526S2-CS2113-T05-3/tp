@@ -29,13 +29,13 @@ test {
 }
 
 application {
-    mainClass.set("seedu.GitSwole.GitSwole")
+    mainClass.set("seedu.gitswole.GitSwole")
 }
 
 shadowJar {
     manifest {
         attributes(
-            'Main-Class': 'seedu.GitSwole.GitSwole'
+            'Main-Class': 'seedu.gitswole.GitSwole'
         )
     }
 }

@@ -24,6 +24,7 @@ public class DeleteCommand extends Command {
      * @param arguments The full command string entered by the user.
      */
     public DeleteCommand(String arguments) {
+        assert arguments != null : "Arguments passed to DeleteCommand cannot be null";
         this.arguments = arguments;
     }
 
@@ -37,6 +38,10 @@ public class DeleteCommand extends Command {
      */
     @Override
     public void execute(WorkoutList workouts, Ui ui) throws GitSwoleException {
+        // Assert that the essential dependencies are initialized before proceeding
+        assert workouts != null : "WorkoutList must be initialized before execution";
+        assert ui != null : "Ui must be initialized before execution";
+
         // Check if the user is trying to delete an exercise (contains "e/")
         if (arguments.contains("e/")) {
             deleteExercise(workouts);
@@ -56,6 +61,9 @@ public class DeleteCommand extends Command {
      */
     private void deleteWorkout(WorkoutList workouts) throws GitSwoleException {
         int wIndex = arguments.indexOf("w/");
+
+        // This method is only called if arguments.contains("w/") was true, so wIndex MUST NOT be -1
+        assert wIndex != -1 : "wIndex should not be -1 because execute() confirmed 'w/' exists";
 
         // Extract the workout name by taking everything after "w/"
         String workoutName = arguments.substring(wIndex + 2).trim();
@@ -88,6 +96,9 @@ public class DeleteCommand extends Command {
         int eIndex = arguments.indexOf("e/");
         int wIndex = arguments.indexOf("w/");
 
+        // This method is only called if arguments.contains("e/") was true, so eIndex MUST NOT be -1
+        assert eIndex != -1 : "eIndex should not be -1 because execute() confirmed 'e/' exists";
+
         // Ensure both prefixes exist and "e/" comes before "w/"
         if (eIndex == -1 || wIndex == -1 || eIndex > wIndex) {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Invalid flag order or missing flags.");
@@ -105,8 +116,7 @@ public class DeleteCommand extends Command {
 
         if (exerciseName.isEmpty() || workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Empty exercise ({0}) or workout ({1}) name.",
-                new Object[]{exerciseName, workoutName});
-            // Print out the warning gracefully instead of throwing an exception
+                    new Object[]{exerciseName, workoutName});
             System.out.println("Exercise or Workout name cannot be empty. Usage: delete e/EXERCISE w/WORKOUT");
             return;
         }
@@ -118,7 +128,7 @@ public class DeleteCommand extends Command {
         } else {
             // Print out the warning gracefully instead of throwing an exception
             System.out.println("'" + exerciseName + "' or workout '" + workoutName
-                + "' not found. Please check your spelling.");
+                    + "' not found. Please check your spelling.");
         }
     }
 }
