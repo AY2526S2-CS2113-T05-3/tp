@@ -1,9 +1,50 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
-What is your name?
-Hello James Gosling
+  _____ _ _   _____               _      
+ |  __ (_) | /  ___|             | |     
+ | |  \/_| |_\ `--.__      _____ | | ___ 
+ | | __| | __|`--. \ \ /\ / / _ \| |/ _ \
+ | |_\ \ | |_/\__/ /\ V  V / (_) | |  __/
+  \____/_|\__\____/  \_/\_/ \___/|_|\___|
+                                         
+                                         
+ Welcome to GitSwole! LET'S GET THEM GAINS
+ ____________________________________________________________________________________________________
+ Successfully added a push session! Remember to add your exercises :)
+ ____________________________________________________________________________________________________
+ Your exercise has been successfully added! Looking swole g
+ ____________________________________________________________________________________________________
+ Your Workouts:
+ 1. push
+ ____________________________________________________________________________________________________
+ ____________________________________________________________________________________________________
+  Workout does not exist. Try again...
+ ____________________________________________________________________________________________________
+ === COMPLETE WORKOUT LOG ===
+ [PUSH]
+  1. benchpress (40kg | 3s | 8r)
+ 
+ ____________________________________________________________________________________________________
+ push | Exercises: 1
+ ____________________________________________________________________________________________________
+ benchpress | Weight: 40kg | Sets: 3 | Reps: 8
+ ____________________________________________________________________________________________________
+ Successfully deleted the Push session!
+ 'benchpress' or workout 'push' not found. Please check your spelling.
+ ====================================================================================================
+                                       GITSWOLE COMMAND SUMMARY
+ ====================================================================================================
+ ACTION               | FORMAT                                                       | EXAMPLE                       
+ ----------------------------------------------------------------------------------------------------
+ Add Workout          | add w/WORKOUT_NAME                                           | add w/push                    
+ Add Exercise         | add e/EXERCISE_NAME w/WORKOUT_NAME                           | add e/benchpress w/push       
+                      |     [wt/WEIGHT] [s/SETS] [r/REPS]                            |     wt/40 s/3 r/8             
+ Delete Workout       | delete w/WORKOUT                                             | delete w/push                 
+ Delete Exercise      | delete e/EXERCISE w/WORKOUT                                  | delete e/benchpress w/push    
+ List Workouts        | list                                                         | list                          
+ List Exercises       | list w/WORKOUT                                               | list w/pull                   
+ List ALL Exercises   | list all                                                     | list all                      
+ Find Workout         | find w/WORKOUT                                               | find w/push                   
+ Find Exercise        | find e/EXERCISE w/WORKOUT                                    | find e/benchpress w/push      
+ Help                 | help                                                         | help                          
+ Exit                 | exit                                                         | exit                          
+ ====================================================================================================
+ For the full user guide, visit: https://xxxxxxxxx.com

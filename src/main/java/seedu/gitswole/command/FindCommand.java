@@ -60,7 +60,7 @@ public class FindCommand extends Command {
         String keyword = Parser.parseValue(arguments, "w/");
         if (keyword == null || keyword.isEmpty()) {
             LOGGER.log(Level.WARNING, "FindWorkout failed: Missing 'w/' keyword.");
-            throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, "findworkout w/WORKOUT");
+            throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, "find w/WORKOUT");
         }
 
         boolean found = false;
@@ -98,7 +98,7 @@ public class FindCommand extends Command {
             || workoutName == null || workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "FindExercise failed: Missing e/ or w/ flag.");
             throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND,
-                "findexercise e/EXERCISE w/WORKOUT");
+                "find e/EXERCISE w/WORKOUT");
         }
 
         Workout targetWorkout = workouts.getWorkoutByName(workoutName);

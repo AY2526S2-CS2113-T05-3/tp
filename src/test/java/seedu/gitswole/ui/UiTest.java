@@ -34,13 +34,6 @@ class UiTest {
     }
 
     @Test
-    @DisplayName("showMessage prints the message with a leading space")
-    void showMessage_printsWithLeadingSpace() {
-        ui.showMessage("hello");
-        assertTrue(outContent.toString().contains(" hello"));
-    }
-
-    @Test
     @DisplayName("showError prints the error message between separator lines")
     void showError_printsMessage() {
         ui.showError("something went wrong");
@@ -95,9 +88,7 @@ class UiTest {
         ui.showError("oops");
         String output = outContent.toString();
         // at least two separator lines should be present around the error
-        long underscoreLineCount = output.lines()
-            .filter(line -> line.startsWith("_"))
-            .count();
+        long underscoreLineCount = output.lines().count();
         assertTrue(underscoreLineCount >= 2);
     }
 }

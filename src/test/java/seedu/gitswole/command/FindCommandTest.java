@@ -63,7 +63,7 @@ class FindCommandTest {
         new FindCommand("find w/push").execute(workouts, ui);
         String output = outContent.toString();
         assertTrue(output.contains("push day"));
-        assertTrue(output.contains("2")); // 2 exercises
+        assertTrue(output.contains("2"));
     }
 
     @Test
@@ -123,9 +123,9 @@ class FindCommandTest {
         new FindCommand("find e/bench w/push day").execute(workouts, ui);
         String output = outContent.toString();
         assertTrue(output.contains("bench press"));
-        assertTrue(output.contains("60"));  // weight
-        assertTrue(output.contains("3"));   // sets
-        assertTrue(output.contains("8"));   // reps
+        assertTrue(output.contains("60")); // weight
+        assertTrue(output.contains("3")); // sets
+        assertTrue(output.contains("8")); // reps
     }
 
     @Test

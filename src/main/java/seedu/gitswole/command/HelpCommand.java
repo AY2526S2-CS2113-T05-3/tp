@@ -33,37 +33,41 @@ public class HelpCommand extends Command {
      */
     public void printHelpMessage(Ui ui) {
         int consoleWidth = ui.getDashes();
-        String format = "%-20s | %-60s | %-30s%n";
+        String format = "%-20s | %-60s | %-30s";
 
         // Header
-        System.out.println("=".repeat(consoleWidth));
+        ui.showMessage("=".repeat(consoleWidth));
         String title = "GITSWOLE COMMAND SUMMARY";
         int padding = (consoleWidth - title.length()) / 2;
-        System.out.println(" ".repeat(Math.max(0, padding)) + title);
-        System.out.println("=".repeat(consoleWidth));
+        ui.showMessage(" ".repeat(Math.max(0, padding)) + title);
+        ui.showMessage("=".repeat(consoleWidth));
 
         // Table Columns
-        System.out.printf(format, "ACTION", "FORMAT", "EXAMPLE");
-        System.out.println("-".repeat(consoleWidth));
+        ui.showMessage(String.format(format, "ACTION", "FORMAT", "EXAMPLE"));
+        ui.showMessage("-".repeat(consoleWidth));
 
         // Commands
-        System.out.printf(format, "Add Workout", "add /w WORKOUT_NAME", "add /w push");
-        System.out.printf(format, "Add Exercise",
-            "add /e EXERCISE_NAME /w WORKOUT_NAME [/wt WEIGHT] [/s SETS] [/r REPS]",
-            "add /e benchpress /w push /wt 40 /s 3 /r 8"
-        );
-        System.out.printf(format, "Delete Workout", "delete w/WORKOUT", "delete w/push");
-        System.out.printf(format, "Delete Exercise", "delete e/EXERCISE w/WORKOUT", "delete e/benchpress w/push");
-        System.out.printf(format, "List Workouts", "list", "list");
-        System.out.printf(format, "List Exercises 1", "list w/workout", "list w/pull");
-        System.out.printf(format, "List Exercises 2", "list all", "list all");
-        System.out.printf(format, "Find Workout", "find w/WORKOUT", "find w/push");
-        System.out.printf(format, "Find Exercise", "find e/EXERCISE w/WORKOUT", "find e/benchpress w/push");
-        System.out.printf(format, "Help", "help", "help");
-        System.out.printf(format, "Exit", "exit", "exit");
+        String[][] commands = {
+            {"Add Workout", "add w/WORKOUT_NAME", "add w/push"},
+            {"Add Exercise", "add e/EXERCISE_NAME w/WORKOUT_NAME", "add e/benchpress w/push"},
+            {"", "    [wt/WEIGHT] [s/SETS] [r/REPS]", "    wt/40 s/3 r/8"},
+            {"Delete Workout", "delete w/WORKOUT", "delete w/push"},
+            {"Delete Exercise", "delete e/EXERCISE w/WORKOUT", "delete e/benchpress w/push"},
+            {"List Workouts", "list", "list"},
+            {"List Exercises", "list w/WORKOUT", "list w/pull"},
+            {"List ALL Exercises", "list all", "list all"},
+            {"Find Workout", "find w/WORKOUT", "find w/push"},
+            {"Find Exercise", "find e/EXERCISE w/WORKOUT", "find e/benchpress w/push"},
+            {"Help", "help", "help"},
+            {"Exit", "exit", "exit"}
+        };
+
+        for (String[] row : commands) {
+            ui.showMessage(String.format(format, row[0], row[1], row[2]));
+        }
 
         // Footer
-        System.out.println("=".repeat(consoleWidth));
-        System.out.println("For the full user guide, visit: https://xxxxxxxxx.com");
+        ui.showMessage("=".repeat(consoleWidth));
+        ui.showMessage("For the full user guide, visit: https://xxxxxxxxx.com");
     }
 }

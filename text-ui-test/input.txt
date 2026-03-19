@@ -1,1 +1,11 @@
-James Gosling
+add w/push
+add e/benchpress w/push wt/40 s/3 r/8
+list
+list w/pull
+list all
+find w/push
+find e/benchpress w/push
+delete w/push
+delete e/benchpress w/push
+help
+exit

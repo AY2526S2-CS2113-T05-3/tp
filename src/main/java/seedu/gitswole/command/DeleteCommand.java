@@ -44,13 +44,13 @@ public class DeleteCommand extends Command {
 
         // Check if the user is trying to delete an exercise (contains "e/")
         if (arguments.contains("e/")) {
-            deleteExercise(workouts);
+            deleteExercise(workouts, ui);
         } else if (arguments.contains("w/")) { // Check if the user is trying to delete a workout (contains "w/")
-            deleteWorkout(workouts);
+            deleteWorkout(workouts, ui);
         } else { // Handle invalid formats
             LOGGER.log(Level.WARNING, "Invalid delete format received: {0}", arguments);
-            System.out.println("Invalid delete format!");
-            System.out.println("Use: delete w/WORKOUT  OR  delete e/EXERCISE w/WORKOUT");
+            ui.showMessage("Invalid delete format!");
+            ui.showMessage("Use: delete w/WORKOUT  OR  delete e/EXERCISE w/WORKOUT");
         }
     }
 
@@ -59,7 +59,7 @@ public class DeleteCommand extends Command {
      *
      * @param workouts The current list of workouts.
      */
-    private void deleteWorkout(WorkoutList workouts) throws GitSwoleException {
+    private void deleteWorkout(WorkoutList workouts, Ui ui) throws GitSwoleException {
         int wIndex = arguments.indexOf("w/");
 
         // This method is only called if arguments.contains("w/") was true, so wIndex MUST NOT be -1
@@ -71,7 +71,7 @@ public class DeleteCommand extends Command {
         if (workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteWorkout failed: Workout name is empty.");
             // Print out the warning gracefully instead of throwing an exception to satisfy the test
-            System.out.println("Please specify the workout name. Usage: delete w/WORKOUT");
+            ui.showMessage("Please specify the workout name. Usage: delete w/WORKOUT");
             return;
         }
 
@@ -79,10 +79,10 @@ public class DeleteCommand extends Command {
 
         if (isDeleted) {
             String formattedName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
-            System.out.println("Successfully deleted the " + formattedName + " session!");
+            ui.showMessage("Successfully deleted the " + formattedName + " session!");
         } else {
             // Print out the warning gracefully instead of throwing an exception to satisfy the test
-            System.out.println("'" + workoutName + "' not found. Please check your spelling.");
+            ui.showMessage("'" + workoutName + "' not found. Please check your spelling.");
             return;
         }
     }
@@ -92,7 +92,7 @@ public class DeleteCommand extends Command {
      *
      * @param workouts The current list of workouts.
      */
-    private void deleteExercise(WorkoutList workouts) throws GitSwoleException {
+    private void deleteExercise(WorkoutList workouts, Ui ui) throws GitSwoleException {
         int eIndex = arguments.indexOf("e/");
         int wIndex = arguments.indexOf("w/");
 
@@ -103,7 +103,7 @@ public class DeleteCommand extends Command {
         if (eIndex == -1 || wIndex == -1 || eIndex > wIndex) {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Invalid flag order or missing flags.");
             // Print out the warning gracefully instead of throwing an exception
-            System.out.println("Invalid format! Please use: delete e/EXERCISE w/WORKOUT");
+            ui.showMessage("Invalid format! Please use: delete e/EXERCISE w/WORKOUT");
             return;
         }
 
@@ -116,19 +116,20 @@ public class DeleteCommand extends Command {
 
         if (exerciseName.isEmpty() || workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Empty exercise ({0}) or workout ({1}) name.",
-                    new Object[]{exerciseName, workoutName});
-            System.out.println("Exercise or Workout name cannot be empty. Usage: delete e/EXERCISE w/WORKOUT");
+                new Object[]{exerciseName, workoutName});
+            // Print out the warning gracefully instead of throwing an exception
+            ui.showMessage("Exercise or Workout name cannot be empty. Usage: delete e/EXERCISE w/WORKOUT");
             return;
         }
 
         boolean isDeleted = workouts.removeExercise(workoutName, exerciseName);
 
         if (isDeleted) {
-            System.out.println("Successfully deleted '" + exerciseName + "' from '" + workoutName + "'!");
+            ui.showMessage("Successfully deleted '" + exerciseName + "' from '" + workoutName + "'!");
         } else {
             // Print out the warning gracefully instead of throwing an exception
-            System.out.println("'" + exerciseName + "' or workout '" + workoutName
-                    + "' not found. Please check your spelling.");
+            ui.showMessage("'" + exerciseName + "' or workout '" + workoutName
+                + "' not found. Please check your spelling.");
         }
     }
 }
