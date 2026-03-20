@@ -3,6 +3,7 @@ package seedu.gitswole.ui;
 import seedu.gitswole.assets.Exercise;
 import seedu.gitswole.assets.Workout;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,6 +20,23 @@ public class Ui {
      */
     public Ui() {
         in = new Scanner(System.in);
+    }
+
+    /**
+     * Constructs an Ui instance and initializes the input scanner.
+     * USED FOR TESTING
+     */
+    public Ui(InputStream in) {
+        this.in = new Scanner(in);
+    }
+
+    /**
+     * Reads and returns a single line of input from the user.
+     *
+     * @return The full string entered by the user.
+     */
+    public String readLine() {
+        return in.hasNextLine() ? in.nextLine().trim() : "";
     }
 
     /**
@@ -81,20 +99,40 @@ public class Ui {
      * @param s The message to display.
      */
     public void showMessage(String s) {
-        System.out.println(" " + s);
+        System.out.println(s);
     }
 
     /**
      * Prints all workouts in the provided list, each separated by a line.
      *
-     * @param workouts The list of {@link Workout} objects to display.
+     * @param workoutList The list of {@link Workout} objects to display.
      */
-    public void printWorkouts(ArrayList<Workout> workouts) {
-        showLine();
-        for (Workout workout : workouts) {
-            printWorkout(workout);
+    public void printWorkouts(ArrayList<Workout> workoutList) {
+        showMessage("=== COMPLETE WORKOUT LOG ===");
+        for (Workout workout : workoutList) {
+            showMessage("[" + workout.getWorkoutName().toUpperCase() + "]");
+            printExercises(workout.getExerciseList());
+            showMessage(""); //Add a new line between workouts
         }
         showLine();
+    }
+
+    /**
+     * Prints all exercises in the provided list, each separated by a line.
+     *
+     * @param exercises The list of {@link Exercise} objects to display.
+     */
+    public void printExercises(ArrayList<Exercise> exercises) {
+        if (exercises.isEmpty()) {
+            showMessage("Your exercises list is currently empty :(");
+            showLine();
+            return;
+        }
+        for (int i = 0; i < exercises.size(); i++) {
+            Exercise e = exercises.get(i);
+            showMessage(String.format(" %d. %s (%dkg | %ds | %dr)", (i + 1), e.getExerciseName(), e.getWeight(),
+                e.getSets(), e.getReps()));
+        }
     }
 
     /**
@@ -103,13 +141,9 @@ public class Ui {
      * @param workout The {@link Workout} to display.
      */
     public void printWorkout(Workout workout) {
-        String name = workout.getWorkoutName().toUpperCase();
-        int padding = (dashes - name.length()) / 2;
-        showMessage(" ".repeat(Math.max(0, padding)) + name);
+        showMessage("[" + workout.getWorkoutName().toUpperCase() + "]");
+        printExercises(workout.getExerciseList());
         showLine();
-        for (Exercise exercise : workout.getExerciseList()) {
-            printExercise(exercise);
-        }
     }
 
     /**
@@ -118,12 +152,9 @@ public class Ui {
      * @param exercise The {@link Exercise} to display.
      */
     public void printExercise(Exercise exercise) {
-        String line = String.format("%-20s | %-6s | %-4s | %-4s",
-            exercise.getExerciseName(),
-            exercise.getWeight(),
-            exercise.getSets(),
-            exercise.getReps());
-        showMessage(line);
+        showMessage(String.format(" %s (%dkg | %ds | %dr)",
+            exercise.getExerciseName(), exercise.getWeight(),
+            exercise.getSets(), exercise.getReps()));
     }
 
     /**

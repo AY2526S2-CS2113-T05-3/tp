@@ -2,14 +2,16 @@ package seedu.gitswole.parser;
 
 import seedu.gitswole.assets.WorkoutList;
 
+import seedu.gitswole.command.EditCommand;
 import seedu.gitswole.command.AddCommand;
-import seedu.gitswole.command.Command;
 import seedu.gitswole.command.DeleteCommand;
+import seedu.gitswole.command.HelpCommand;
 import seedu.gitswole.command.ExitCommand;
 import seedu.gitswole.command.FindCommand;
-import seedu.gitswole.command.HelpCommand;
 import seedu.gitswole.command.ListCommand;
 import seedu.gitswole.command.MarkCommand;
+import seedu.gitswole.command.Command;
+
 import seedu.gitswole.exceptions.GitSwoleException;
 import seedu.gitswole.ui.Ui;
 
@@ -27,7 +29,7 @@ public class Parser {
     private static final Logger logger = Logger.getLogger(Parser.class.getName());
 
     enum CommandType {
-        ADD, DELETE, EXIT, HELP, LIST, FIND, MARK
+        ADD, DELETE, EXIT, HELP, LIST, FIND, MARK, EDIT
     }
 
     private static final Map<String, CommandType> COMMAND_MAP = new HashMap<>();
@@ -41,6 +43,7 @@ public class Parser {
         COMMAND_MAP.put("find", CommandType.FIND);
         COMMAND_MAP.put("mark", CommandType.MARK);
         COMMAND_MAP.put("unmark", CommandType.MARK);
+        COMMAND_MAP.put("edit", CommandType.EDIT);
     }
 
     private Ui ui;
@@ -93,6 +96,12 @@ public class Parser {
                 throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, command);
             }
             return new FindCommand(response);
+        case EDIT:
+            if (words.length < 2) {
+                logger.log(Level.WARNING, "Edit command missing keyword.");
+                throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, command);
+            }
+            return new EditCommand(response);
         case LIST:
             return new ListCommand(response);
         case HELP:

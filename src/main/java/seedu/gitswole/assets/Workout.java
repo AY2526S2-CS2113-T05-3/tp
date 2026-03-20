@@ -110,4 +110,13 @@ public class Workout {
     public void markDone(boolean isDone) {
         this.isDone = isDone;
     }
+
+    public Exercise getExerciseByName(String exerciseToEditString) {
+        for (Exercise e : exerciseList) {
+            if (exerciseToEditString.equals(e.getExerciseName())) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

@@ -1,6 +1,5 @@
 package seedu.gitswole.command;
 
-import seedu.gitswole.assets.Exercise;
 import seedu.gitswole.assets.Workout;
 import seedu.gitswole.assets.WorkoutList;
 import seedu.gitswole.exceptions.GitSwoleException;
@@ -84,7 +83,7 @@ public class ListCommand extends Command {
             throw new GitSwoleException(GitSwoleException.ErrorType.IDX_OUTOFBOUNDS, workoutName);
         }
         ui.showMessage(workout.getWorkoutName().toUpperCase() + " Workout Exercises:");
-        printExercises(workout.getExerciseList(), ui);
+        ui.printExercises(workout.getExerciseList());
         ui.showLine();
     }
 
@@ -101,27 +100,8 @@ public class ListCommand extends Command {
             return;
         }
 
-        ui.showMessage("=== COMPLETE WORKOUT LOG ===");
-        for (Workout workout : workoutList) {
-            ui.showMessage("[" + workout.getWorkoutName().toUpperCase() + "]");
-            printExercises(workout.getExerciseList(), ui);
-            ui.showMessage(""); //Add a new line between workouts
-        }
-        ui.showLine();
+        ui.printWorkouts(workoutList);
     }
 
-
-    private void printExercises(ArrayList<Exercise> exercises, Ui ui) {
-        if (exercises.isEmpty()) {
-            ui.showMessage("Your exercises list is currently empty :(");
-            ui.showLine();
-            return;
-        }
-        for (int i = 0; i < exercises.size(); i++) {
-            Exercise e = exercises.get(i);
-            ui.showMessage(String.format(" %d. %s (%dkg | %ds | %dr)", (i + 1), e.getExerciseName(), e.getWeight(),
-                e.getSets(), e.getReps()));
-        }
-    }
 
 }
