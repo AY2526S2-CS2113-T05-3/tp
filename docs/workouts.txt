@@ -1,3 +1,13 @@
 WORKOUT | push | false
-EXERCISE | benchpress | 40 | 3 | 8
+EXERCISE | benchpress | 60 | 3 | 8
+---
+WORKOUT | pull | false
+---
+WORKOUT | legs | false
+---
+WORKOUT | push | false
+---
+WORKOUT | push | false
+---
+WORKOUT | push | false
 ---

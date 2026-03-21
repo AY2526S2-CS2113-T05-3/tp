@@ -6,7 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import seedu.gitswole.assets.WorkoutList;
+import seedu.gitswole.storage.Storage;
 
+import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("GitSwole")
 class GitSwoleTest {
 
+    private static final String TEST_STORAGE_PATH = "test_storage.txt";
     private final PrintStream originalOut = System.out;
     private final InputStream originalIn = System.in;
     private ByteArrayOutputStream outContent;
@@ -32,6 +35,7 @@ class GitSwoleTest {
 
     @AfterEach
     void tearDown() throws Exception {
+        new File(TEST_STORAGE_PATH).delete();
         System.setOut(originalOut);
         System.setIn(originalIn);
         resetStaticState();
@@ -47,6 +51,10 @@ class GitSwoleTest {
         Field workoutsField = GitSwole.class.getDeclaredField("workouts");
         workoutsField.setAccessible(true);
         workoutsField.set(null, new WorkoutList());
+
+        Field storageField = GitSwole.class.getDeclaredField("storage");
+        storageField.setAccessible(true);
+        storageField.set(null, new Storage(TEST_STORAGE_PATH));
 
         // ui is re-created by the constructor
         // null it here so any accidental call to run() without a prior constructor invocation fails fast.
