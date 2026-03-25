@@ -109,22 +109,4 @@ public class WorkoutList {
         }
         return null;
     }
-
-    public int numOfCompletedWorkouts() {
-        int count = 0;
-        for (Workout w : workouts) {
-            if (w.isDone()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public int numOfTotalExercises() {
-        int count = 0;
-        for (Workout w : workouts) {
-            count += w.getNumOfExercises();
-        }
-        return count;
-    }
 }

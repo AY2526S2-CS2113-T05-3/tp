@@ -2,11 +2,7 @@ package seedu.gitswole.ui;
 
 import seedu.gitswole.assets.Exercise;
 import seedu.gitswole.assets.Workout;
-import seedu.gitswole.assets.WorkoutList;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -56,61 +52,17 @@ public class Ui {
     /**
      * Displays the application logo and a welcome message on startup.
      */
-    public void helloGreeting(WorkoutList workouts) {
-        int total = workouts.numOfWorkouts();
-        int done = workouts.numOfCompletedWorkouts();
-        int exercises = workouts.numOfTotalExercises();
-        String[] quotes = {
-            "The only bad workout is the one that didn't happen.",
-            "Your body is the most complex hardware you’ll ever own; keep it optimized.",
-            "Your body can stand almost anything. It's your mind you have to convince.",
-            "Success starts with self-discipline.",
-            "Great strength isn't built in a single push; it's a series of successful merges",
-            "Debugging your life starts with upgrading your health.",
-            "Commit to the process and the results will follow."
-        };
+    public void helloGreeting() {
+        showMessage(" _____ _ _   _____               _      ");
+        showMessage("|  __ (_) | /  ___|             | |     ");
+        showMessage("| |  \\/_| |_\\ `--.__      _____ | | ___ ");
+        showMessage("| | __| | __|`--. \\ \\ /\\ / / _ \\| |/ _ \\");
+        showMessage("| |_\\ \\ | |_/\\__/ /\\ V  V / (_) | |  __/");
+        showMessage(" \\____/_|\\__\\____/  \\_/\\_/ \\___/|_|\\___|");
+        showMessage("                                        ");
+        showMessage("                                        ");
 
-        String quote = quotes[new Random().nextInt(quotes.length)];
-        showLine();
-        showMessage("|     ______      __   _____                   __");
-        showMessage("|    / ____/ (_)_/ /_ / ___/__   ___  __ ___  / /  _______   ");
-        showMessage("|   / / __  / //_ __/ \\_ \\_ \\ \\  | | / / __ \\/ /  / /__/ /  ");
-        showMessage("|  / /_/ / / / / /_ ___/  /  \\ \\ / |/ / /_/ / /__/ _____/");
-        showMessage("|  \\____/ /_/ \\__/ \\_____/    \\__/|__/\\____/____/\\_____/    ");
-        showMessage("|                                       ");
-
-        showMessage("| Welcome to GitSwole! (@w@)/");
-        showMessage("| First time using it? Type 'help' to see what ya got!");
-        showMessage("| v2.0 | " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
-        showLine();
-        showMessage("| PROGRESS SNAPSHOT ");
-        showMessage("| Workouts logged  : " + total);
-        showMessage("| Workouts done    : " + done + " / " + total);
-        showMessage("| Total exercises  : " + exercises);
-        showLine();
-        if (done == 1) {
-            showMessage("| First workout crushed! (*´▽`*) Current Tier: Coal");
-        } else if (done == 2) {
-            showMessage("| Double kills! level up: Wood tier achieved (❛◡❛)");
-        } else if (done == 3) {
-            showMessage("| Triple workout conquered! ヽ(@´∀`@)ﾉ Current Tier: Bronze");
-        } else if (done == 4) {
-            showMessage("| Quadra kills! level up: Silver tier achieved Σヽ(ﾟД ﾟ; )ﾉ");
-        } else if (done == 5) {
-            showMessage("| Rampage! Workouts are now enslaved. Current Tier: Gold (✘Д✘๑ )");
-        } else if (done == 6) {
-            showMessage("| Killing spree! level up: Platinum tier (oωo)");
-        } else if (done == 7) {
-            showMessage("| Godlike! Workouts surrender to you,my lord. Current Tier: Diamond Σ( ° △ °|||)");
-        } else if (done == 8) {
-            showMessage("| Aced! The iron obeys your command. Current Tier: Master w(ﾟДﾟ)w");
-        } else if (done == 9) {
-            showMessage("| Unstoppable! You are the workout legend! Current Tier: Legendary (o◡o)");
-        } else if (done >= 10) {
-            showMessage("| Congrats! You've reached the highest tier: Eternal");
-        }
-        showLine();
-        showMessage("| Daily quote:\"" + quote + "\"");
+        showMessage("Welcome to GitSwole! LET'S GET THEM GAINS");
         showLine();
     }
 

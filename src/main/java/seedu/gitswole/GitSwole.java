@@ -100,7 +100,7 @@ public class GitSwole {
      */
     public static void run() {
         Parser parser = new Parser();
-        ui.helloGreeting(workouts);
+        ui.helloGreeting();
         boolean isExit = false;
         while (!isExit) {
             try {
