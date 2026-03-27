@@ -1,0 +1,27 @@
+@startuml StorageSaveSequence
+
+participant "GitSwole" as GS
+participant "Storage" as S
+participant "WorkoutList" as WL
+participant "Workout" as W
+participant "FileWriter" as FW
+
+GS -> S : save(workoutList)
+S -> S : create parent dirs if needed
+S -> FW : new FileWriter(filePath)
+
+loop for each workout in workoutList
+    S -> WL : getWorkouts()
+    WL --> S : ArrayList<Workout>
+    S -> FW : write("WORKOUT | name | isDone")
+    loop for each exercise in workout
+        S -> W : getExerciseList()
+        W --> S : ArrayList<Exercise>
+        S -> FW : write("EXERCISE | name | weight | sets | reps")
+    end
+    S -> FW : write("---")
+end
+
+S -> FW : close()
+
+@enduml

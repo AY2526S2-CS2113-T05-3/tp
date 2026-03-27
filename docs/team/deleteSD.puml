@@ -1,0 +1,39 @@
+@startuml DeleteActivityDiagram
+
+start
+
+:User enters delete command;
+
+if (arguments contains "e/"?) then (yes)
+    :Extract exerciseName and workoutName;
+    if (eIndex before wIndex AND both present?) then (yes)
+        :Call removeExercise(workoutName, exerciseName);
+        if (isDeleted?) then (yes)
+            :Show success message;
+        else (no)
+            :Show "not found" message;
+        endif
+    else (no)
+        :Show "invalid format" message;
+    endif
+else (no)
+    if (arguments contains "w/"?) then (yes)
+        :Extract workoutName;
+        if (workoutName is empty?) then (yes)
+            :Show "please specify name" message;
+        else (no)
+            :Call removeWorkout(workoutName);
+            if (isDeleted?) then (yes)
+                :Show success message;
+            else (no)
+                :Show "not found" message;
+            endif
+        endif
+    else (no)
+        :Show "invalid delete format" message;
+    endif
+endif
+
+stop
+
+@enduml

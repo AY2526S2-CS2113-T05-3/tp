@@ -29,12 +29,15 @@ test {
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("seedu.gitswole.GitSwole")
 }
 
 shadowJar {
-    archiveBaseName.set("duke")
-    archiveClassifier.set("")
+    manifest {
+        attributes(
+            'Main-Class': 'seedu.gitswole.GitSwole'
+        )
+    }
 }
 
 checkstyle {
@@ -43,4 +46,13 @@ checkstyle {
 
 run{
     standardInput = System.in
+    enableAssertions = true
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    applicationDefaultJvmArgs = ["-Dfile.encoding=UTF-8"]
 }

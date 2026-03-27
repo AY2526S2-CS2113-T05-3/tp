@@ -1,4 +1,4 @@
-#About Us
+# About Us
 
 Display |     Name      |                 Github Profile                 | Portfolio 
 --------|:-------------:|:----------------------------------------------:|:---------:

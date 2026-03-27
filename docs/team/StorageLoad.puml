@@ -1,0 +1,33 @@
+@startuml StorageLoadSequence
+
+participant "GitSwole" as GS
+participant "Storage" as S
+participant "File" as F
+participant "WorkoutList" as WL
+
+GS -> S : load()
+S -> F : file.exists()?
+
+alt file not found
+    S --> GS : return new WorkoutList()
+else file exists
+    loop for each line in file
+        S -> F : readLine()
+        F --> S : line : String
+
+        alt tag == "WORKOUT"
+            S -> S : parseWorkoutLine(parts, lineNumber)
+            S -> WL : currentWorkout = new Workout(name)
+        else tag == "EXERCISE"
+            S -> S : parseExerciseLine(parts, lineNumber)
+            S -> WL : currentWorkout.addExercise(exercise)
+        else tag == "---"
+            S -> WL : addWorkout(currentWorkout)
+        else unrecognised tag
+            S -> S : throw StorageException(lineNumber)
+        end
+    end
+    S --> GS : return WorkoutList
+end
+
+@enduml
