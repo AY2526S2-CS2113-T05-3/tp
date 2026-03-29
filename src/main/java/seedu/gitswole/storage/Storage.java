@@ -25,22 +25,12 @@ import java.util.Scanner;
  */
 public class Storage {
 
-    /** Delimiter used to separate fields within a line. */
     private static final String DELIMITER = " | ";
-
-    /** Regex-safe version of the delimiter for splitting. */
     private static final String DELIMITER_REGEX = " \\| ";
-
-    /** Separator line that marks the end of each workout block. */
     private static final String WORKOUT_SEPARATOR = "---";
-
-    /** Prefix tag for workout header lines. */
     private static final String WORKOUT_TAG = "WORKOUT";
-
-    /** Prefix tag for exercise entry lines. */
     private static final String EXERCISE_TAG = "EXERCISE";
-
-    /** Path to the storage file. */
+    // Path to the storage file
     private final String filePath;
 
     /**
@@ -49,7 +39,7 @@ public class Storage {
      * @param filePath Path to the plain text file used for persistence.
      */
     public Storage(String filePath) {
-        assert filePath != null && !filePath.isBlank() : "File path must not be null or blank";
+        assert filePath != null && !filePath.isBlank() : "File path must not be blank";
         this.filePath = filePath;
     }
 
@@ -62,7 +52,7 @@ public class Storage {
      * @throws IOException If an I/O error occurs while writing.
      */
     public void save(WorkoutList workoutList) throws IOException {
-        assert workoutList != null : "WorkoutList to save must not be null";
+        assert workoutList != null : "WorkoutList to save must not be blank";
 
         File file = new File(filePath);
         // Create parent directories if they don't exist
@@ -85,7 +75,6 @@ public class Storage {
      * @throws IOException If an I/O error occurs.
      */
     private void writeWorkout(FileWriter writer, Workout workout) throws IOException {
-        // WORKOUT | <name> | <isDone>
         writer.write(WORKOUT_TAG
                 + DELIMITER + escape(workout.getWorkoutName())
                 + DELIMITER + workout.isDone()
