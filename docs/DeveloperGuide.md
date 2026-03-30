@@ -307,6 +307,40 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 
 <img src="diagrams/architecture/Storage/historystorageSD.png" width="600" />
 
+---
+
+### ShuoJie's enhancement: History Retrieval (`LogList`)
+
+The `LogList` enhancement provides users with a dedicated way to view their past workout sessions chronologically. While the standard `list` command displays workout templates (routines), `loglist` retrieves actual performed data from the persistent history file.
+
+#### Implementation
+
+The `LogList` mechanism is centered around the `LogListCommand` class. It serves as the bridge between the `HistoryStorage` component and the `Ui` component.
+
+**How it works:**
+The execution flow involves the following steps:
+
+1. **Initialization:** When the user enters `loglist`, the `Parser` identifies the keyword and returns a `LogListCommand` object.
+2. **Data Fetching:** Upon calling `execute()`, the command requests all log data from `HistoryStorage#loadHistory()`.
+3. **Validation:** The command checks if the returned list is empty. If no history exists (e.g., a new user), it directs the `Ui` to show a "No history found" message.
+4. **Iterative Display:** If data exists, the command iterates through the list of log strings and calls `Ui#showMessage()` for each entry to render them in the terminal.
+
+#### Sequence Diagram
+
+The diagram below shows how the components interact when a user requests to see their workout history.
+
+<img src="diagrams/commands/loglist/loglistSD.png" width="700" />
+
+#### Design Considerations
+
+**Aspect: Data Source for History**
+
+* **Alternative 1 (Current Choice): Reading directly from `history.txt` via `HistoryStorage`.**
+    * **Pros:** Ensures that the user sees the most up-to-date data saved on the disk, even if the file was edited manually. It keeps the memory footprint low as history is only loaded when requested.
+    * **Cons:** Slightly slower than reading from an in-memory list because it requires File I/O.
+* **Alternative 2: Keeping an in-memory `ArrayList` of history logs.**
+    * **Pros:** Faster retrieval as no file reading is required during the command execution.
+    * **Why Rejected:** As a user logs more workouts over months, keeping every historical entry in RAM is inefficient. Since `loglist` is not a high-frequency command (like `add` or `log`), the slight trade-off in speed for better memory management was preferred.
 
 ---
 
@@ -363,7 +397,7 @@ Given below is an example usage scenario for `edit w/Push Day e/Bench Press` and
 to retrieve the `Workout` object, then `Workout#getExerciseByName()` to retrieve the
 `Exercise` object. A `GitSwoleException` is thrown if either is not found.
 
-**Step 4.** The current workout and exercise details are printed via `Ui#printExercise()`.
+**Step 4.** The current workout and exercise details are2 printed via `Ui#printExercise()`.
 `Ui#readLine()` is called to collect the user's edit input in the format
 `wn/NewWorkout en/NewExercise wt/100 s/3 r/10`. Fields not provided are left unchanged.
 

@@ -1,0 +1,40 @@
+@startuml
+title Sequence Diagram: LogListCommand
+
+participant ":Parser" as Parser
+participant "l:LogListCommand" as LogListCommand
+participant ":HistoryStorage" as HistoryStorage
+participant ":Ui" as Ui
+
+[-> Parser : parse("loglist")
+activate Parser
+create LogListCommand
+Parser -> LogListCommand : new LogListCommand(response)
+[<-- Parser : l
+deactivate Parser
+
+[-> LogListCommand : execute()
+activate LogListCommand
+
+LogListCommand -> HistoryStorage : loadHistory()
+activate HistoryStorage
+HistoryStorage --> LogListCommand : logs: ArrayList<String>
+deactivate HistoryStorage
+
+alt logs is empty
+    LogListCommand -> Ui : showError("No history found")
+    activate Ui
+    Ui --> LogListCommand
+    deactivate Ui
+else
+    loop for each log in logs
+        LogListCommand -> Ui : showMessage(log)
+        activate Ui
+        Ui --> LogListCommand
+        deactivate Ui
+    end
+end
+
+[<-- LogListCommand
+deactivate LogListCommand
+@enduml
