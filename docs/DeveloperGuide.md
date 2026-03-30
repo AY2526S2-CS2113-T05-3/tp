@@ -5,13 +5,15 @@
 1. Clone the repository to your local machine:
    ```bash
    git clone https://github.com/AY2526S2-CS2113-W10-3/tp
+   ```
 2. navigate into the project directory:
    ```bash
    cd tp
+   ```
 3. Run the application using Gradle:
    ```bash
    ./gradlew run
-
+    ```
 ## Design
 
 The **Architecture Diagram** below gives a high-level design overview of GitSwole.
@@ -39,7 +41,7 @@ The bulk of the app's work is done by the following four components:
 The *Sequence Diagram* below shows how the components interact with each other for the scenario 
 where the user issues the command `add w/Push Day`.
 
-<img src="diagrams/architecture/architectureSequenceDiagram.png" width="982" />
+<img src="diagrams/architecture/ArchitectureSequenceDiagram.png" width="982" />
 
 Each of the four main components:
 - defines its API through a well-scoped class boundary.
@@ -232,8 +234,8 @@ Each workout block consists of:
 
 <img src="diagrams/architecture/Storage/StorageLoad-Sequence_Diagram__Storage_load__.png" width="742" />
 
- 
 ---
+
 ### Praveen's enhancement
 
 This enhancement introduces a robust workout logging and history tracking system, along with a multi-tiered listing 
@@ -310,7 +312,39 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 
 ---
 
-### Edit Workout Feature
+### Vetri's Enhancement
+
+This enhancement introduces the core application skeleton and an in-place workout and exercise editing system.
+It is composed of the `GitSwole`, `Parser`, `Ui`, `Command`, `WorkoutList`, `Workout`, `Exercise`, and `EditCommand`
+classes.
+
+#### 1. Core Application Architecture
+
+The foundational structure establishes the lifecycle management, command dispatch, and data model for the entire
+application.
+
+* **Implementation:**
+  `GitSwole` is the entry point. It calls `setupLogger()`, instantiates `Ui` and `Storage`, loads persisted data into a
+  `WorkoutList`, then enters the main read-execute loop via `run()`. The key classes are:
+    - `Parser`: Uses a `HashMap<String, CommandType>` for O(1) keyword lookups and exposes a reusable
+      `parseValue(input, flag)` static utility for flag extraction across all commands.
+    - `Ui`: Decouples all terminal I/O from command logic, reading raw input and rendering all output without any
+      knowledge of business logic.
+    - `Command`: Abstract base class enforcing a consistent `execute(WorkoutList, Ui)` interface that every command
+      subclass must implement.
+    - `Assets` (`WorkoutList`, `Workout`, `Exercise`): Models the domain with lookup methods such as
+      `getWorkoutByName()` and `getExerciseByName()` reused across multiple commands.
+
+
+* **Design Considerations:**
+    - **Why it is implemented this way:** Separating concerns across `Ui`, `Parser`, `Command`, and `Assets` from the
+      outset allowed each team member to independently implement commands without coupling business logic to I/O or data
+      management.
+    - **Alternatives considered:** A monolithic class handling parsing, execution, and I/O together. This was rejected
+      as it would make unit testing very challenging and could create multiple merge conflicts across teammates working on
+      different commands simultaneously.
+
+#### 2. Edit Workout and Exercise Feature (`EditCommand`)
 
 The edit feature allows users to rename an existing workout or modify the details of
 a specific exercise within a workout. It is facilitated by `EditCommand`, which interacts
