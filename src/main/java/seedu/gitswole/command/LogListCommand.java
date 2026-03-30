@@ -22,16 +22,33 @@ import java.util.logging.Level;
  */
 public class LogListCommand extends Command {
     private String response;
-    private HistoryStorage historyStorage = new HistoryStorage();
+    private HistoryStorage historyStorage;
 
     /**
     * Constructs a LogListCommand with the raw user input string.
+    * <p>
+    * This constructor is used by the production application and initializes a real {@link HistoryStorage}.
     *
     * @param response The full command string entered by the user.
     */
     public LogListCommand(String response) {
+        this(response, new HistoryStorage());
+    }
+
+    /**
+    * Constructs a LogListCommand with a specific {@link HistoryStorage} instance.
+    * <p>
+    * This constructor supports dependency injection, allowing for the use of mock or stub
+    * storage objects during testing.
+    *
+    * @param response       The full command string entered by the user.
+    * @param historyStorage The {@link HistoryStorage} instance to use for reading history logs.
+    */
+    public LogListCommand(String response, HistoryStorage historyStorage) {
         assert response != null : "Response cannot be null";
+        assert historyStorage != null : "HistoryStorage cannot be null";
         this.response = response;
+        this.historyStorage = historyStorage;
     }
 
     /**

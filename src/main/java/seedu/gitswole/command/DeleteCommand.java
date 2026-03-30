@@ -1,9 +1,6 @@
 package seedu.gitswole.command;
-
 import seedu.gitswole.assets.WorkoutList;
-import seedu.gitswole.exceptions.GitSwoleException;
 import seedu.gitswole.ui.Ui;
-
 import java.util.logging.Level;
 
 /**
@@ -34,10 +31,9 @@ public class DeleteCommand extends Command {
      *
      * @param workouts The current list of workouts.
      * @param ui       The user interface for displaying results or error messages.
-     * @throws GitSwoleException If the input format is invalid or required fields are missing.
      */
     @Override
-    public void execute(WorkoutList workouts, Ui ui) throws GitSwoleException {
+    public void execute(WorkoutList workouts, Ui ui) {
         // Assert that the essential dependencies are initialized before proceeding
         assert workouts != null : "WorkoutList must be initialized before execution";
         assert ui != null : "Ui must be initialized before execution";
@@ -59,7 +55,7 @@ public class DeleteCommand extends Command {
      *
      * @param workouts The current list of workouts.
      */
-    private void deleteWorkout(WorkoutList workouts, Ui ui) throws GitSwoleException {
+    private void deleteWorkout(WorkoutList workouts, Ui ui) {
         int wIndex = arguments.indexOf("w/");
 
         // This method is only called if arguments.contains("w/") was true, so wIndex MUST NOT be -1
@@ -70,7 +66,6 @@ public class DeleteCommand extends Command {
 
         if (workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteWorkout failed: Workout name is empty.");
-            // Print out the warning gracefully instead of throwing an exception to satisfy the test
             ui.showMessage("Please specify the workout name. Usage: delete w/WORKOUT");
             return;
         }
@@ -92,7 +87,7 @@ public class DeleteCommand extends Command {
      *
      * @param workouts The current list of workouts.
      */
-    private void deleteExercise(WorkoutList workouts, Ui ui) throws GitSwoleException {
+    private void deleteExercise(WorkoutList workouts, Ui ui) {
         int eIndex = arguments.indexOf("e/");
         int wIndex = arguments.indexOf("w/");
 
@@ -117,7 +112,6 @@ public class DeleteCommand extends Command {
         if (exerciseName.isEmpty() || workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Empty exercise ({0}) or workout ({1}) name.",
                 new Object[]{exerciseName, workoutName});
-            // Print out the warning gracefully instead of throwing an exception
             ui.showMessage("Exercise or Workout name cannot be empty. Usage: delete e/EXERCISE w/WORKOUT");
             return;
         }
@@ -127,7 +121,6 @@ public class DeleteCommand extends Command {
         if (isDeleted) {
             ui.showMessage("Successfully deleted '" + exerciseName + "' from '" + workoutName + "'!");
         } else {
-            // Print out the warning gracefully instead of throwing an exception
             ui.showMessage("'" + exerciseName + "' or workout '" + workoutName
                 + "' not found. Please check your spelling.");
         }

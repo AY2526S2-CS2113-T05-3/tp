@@ -32,7 +32,9 @@ class LogCommandTest {
      */
     private static class HistoryStorageStub extends HistoryStorage {
         @Override
-        public boolean hasSessionToday(String workoutName) { return false; }
+        public boolean hasSessionToday(String workoutName) {
+            return false;
+        }
         @Override
         public void writeSessionHeader(String workoutName) throws IOException {}
         @Override
