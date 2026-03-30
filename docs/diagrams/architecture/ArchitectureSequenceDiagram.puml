@@ -1,6 +1,7 @@
 @startuml
 !pragma layout smetana
 hide footbox
+title Architecture Sequence Diagram: add w/Push Day
 
 actor User
 

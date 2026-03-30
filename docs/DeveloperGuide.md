@@ -16,7 +16,7 @@
 
 The **Architecture Diagram** below gives a high-level design overview of GitSwole.
 
-<img src="team/architectureDiagram.png" width="450" />
+<img src="diagrams/architecture/architectureDiag.png" width="450" />
 
 Given below is a quick overview of the main components and how they interact with each other.
 
@@ -39,7 +39,7 @@ The bulk of the app's work is done by the following four components:
 The *Sequence Diagram* below shows how the components interact with each other for the scenario 
 where the user issues the command `add w/Push Day`.
 
-<img src="team/architectureSD.png" width="574" />
+<img src="diagrams/architecture/architectureSequenceDiagram.png" width="982" />
 
 Each of the four main components:
 - defines its API through a well-scoped class boundary.
@@ -65,7 +65,7 @@ It exposes the following key operations:
 > **Note:** `Ui` provides an overloaded constructor `Ui(InputStream in)` used exclusively
 > for testing, allowing simulated input to be injected without modifying the production code path.
 
-<img src="diagrams/architecture/Ui/UiComponent.png" width="400" />
+<img src="diagrams/architecture/Ui/UiComponent.png" width="573" />
 
 ---
 
@@ -223,15 +223,15 @@ makes it difficult for users to correct mistakes.
 
 The following sequence diagram illustrates how the `ListCommand` determines the scope of the listing and interacts with the `WorkoutList` and `Ui` components:
 
-<img src="team/listSD.png" width="600" />
+<img src="diagrams/commands/list/listSD.png" width="646" />
 
 This sequence diagram shows the execution flow of the `LogCommand`, highlighting the "sticky session" logic and the interaction with `HistoryStorage`:
 
-<img src="team/logSD.png" width="600" />
+<img src="diagrams/commands/log/logSD.png" width="886" />
 
 The following diagram details the internal "Smart Overwriting" mechanism within `HistoryStorage`:
 
-<img src="team/historystorageSD.png" width="600" />
+<img src="diagrams/architecture/Storage/historystorageSD.png" width="600" />
 
 
 ---
