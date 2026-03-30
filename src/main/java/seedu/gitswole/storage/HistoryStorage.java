@@ -18,9 +18,27 @@ import java.util.List;
  * and allows for updating existing exercise logs within a session.
  */
 public class HistoryStorage {
-    private static final String HISTORY_FILE_PATH = "docs/history.txt";
+    private static final String DEFAULT_HISTORY_FILE_PATH = "docs/history.txt";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private static final DateTimeFormatter FULL_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm");
+    
+    private final String historyFilePath;
+
+    /**
+     * Constructs a HistoryStorage instance with the default file path.
+     */
+    public HistoryStorage() {
+        this(DEFAULT_HISTORY_FILE_PATH);
+    }
+
+    /**
+     * Constructs a HistoryStorage instance with the given file path.
+     *
+     * @param filePath Path to the history file.
+     */
+    public HistoryStorage(String filePath) {
+        this.historyFilePath = filePath;
+    }
 
     /**
      * Checks if a session for the given workout already exists for today.
@@ -31,7 +49,7 @@ public class HistoryStorage {
      */
     public boolean hasSessionToday(String workoutName) throws IOException {
         ensureFileExists();
-        List<String> lines = Files.readAllLines(Paths.get(HISTORY_FILE_PATH));
+        List<String> lines = Files.readAllLines(Paths.get(historyFilePath));
         String today = LocalDateTime.now().format(DATE_FORMATTER);
         String headerTrigger = "[" + today;
         String workoutTrigger = workoutName.toUpperCase() + " workout";
@@ -53,7 +71,7 @@ public class HistoryStorage {
     public void writeSessionHeader(String workoutName) throws IOException {
         ensureFileExists();
         String timestamp = LocalDateTime.now().format(FULL_FORMATTER);
-        Path path = Paths.get(HISTORY_FILE_PATH);
+        Path path = Paths.get(historyFilePath);
         List<String> lines = new ArrayList<>(Files.readAllLines(path));
         
         if (!lines.isEmpty()) {
@@ -76,7 +94,7 @@ public class HistoryStorage {
      */
     public void updateExerciseLog(String workoutName, Exercise exercise, String remark) throws IOException {
         ensureFileExists();
-        Path path = Paths.get(HISTORY_FILE_PATH);
+        Path path = Paths.get(historyFilePath);
         List<String> lines = new ArrayList<>(Files.readAllLines(path));
         
         int startIndex = findSessionStartIndex(lines, workoutName);
@@ -155,7 +173,7 @@ public class HistoryStorage {
     }
 
     private void ensureFileExists() throws IOException {
-        Path path = Paths.get(HISTORY_FILE_PATH);
+        Path path = Paths.get(historyFilePath);
         if (Files.exists(path)) {
             return;
         }
@@ -171,7 +189,7 @@ public class HistoryStorage {
      */
     public List<String> getAllEntries() throws IOException {
         ensureFileExists();
-        List<String> lines = Files.readAllLines(Paths.get(HISTORY_FILE_PATH));
+        List<String> lines = Files.readAllLines(Paths.get(historyFilePath));
         return lines.isEmpty() ? new ArrayList<>() : lines;
     }
 
@@ -184,7 +202,7 @@ public class HistoryStorage {
     */
     public List<String> getEntriesByWorkout(String workoutName) throws IOException {
         ensureFileExists();
-        List<String> lines = Files.readAllLines(Paths.get(HISTORY_FILE_PATH));
+        List<String> lines = Files.readAllLines(Paths.get(historyFilePath));
         List<String> result = new ArrayList<>();
         String workoutTrigger = workoutName.toUpperCase() + " workout";
 
@@ -215,7 +233,7 @@ public class HistoryStorage {
     */
     public List<String> getEntriesByDate(String date) throws IOException {
         ensureFileExists();
-        List<String> lines = Files.readAllLines(Paths.get(HISTORY_FILE_PATH));
+        List<String> lines = Files.readAllLines(Paths.get(historyFilePath));
         List<String> result = new ArrayList<>();
         String dateTrigger = "[" + date;
 
