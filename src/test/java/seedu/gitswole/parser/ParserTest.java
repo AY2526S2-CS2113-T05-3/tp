@@ -12,6 +12,10 @@ import seedu.gitswole.command.FindCommand;
 import seedu.gitswole.command.HelpCommand;
 import seedu.gitswole.command.ListCommand;
 import seedu.gitswole.exceptions.GitSwoleException;
+import seedu.gitswole.command.MarkCommand;
+import seedu.gitswole.command.EditCommand;
+import seedu.gitswole.command.LogCommand;
+import seedu.gitswole.command.LogListCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -148,6 +152,104 @@ class ParserTest {
         GitSwoleException ex = assertThrows(GitSwoleException.class,
             () -> parser.readResponse("find", workouts));
         assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("readResponse returns MarkCommand for 'mark 1'")
+    void readResponse_mark() throws GitSwoleException {
+        assertInstanceOf(MarkCommand.class, parser.readResponse("mark 1", workouts));
+    }
+
+    @Test
+    @DisplayName("readResponse returns MarkCommand for 'unmark 1'")
+    void readResponse_unmark() throws GitSwoleException {
+        assertInstanceOf(MarkCommand.class, parser.readResponse("unmark 1", workouts));
+    }
+
+    @Test
+    @DisplayName("readResponse returns EditCommand for 'edit w/push'")
+    void readResponse_edit() throws GitSwoleException {
+        assertInstanceOf(EditCommand.class, parser.readResponse("edit w/push", workouts));
+    }
+
+    @Test
+    @DisplayName("readResponse returns LogCommand for 'log w/push'")
+    void readResponse_log() throws GitSwoleException {
+        assertInstanceOf(LogCommand.class, parser.readResponse("log w/push", workouts));
+    }
+
+    @Test
+    @DisplayName("readResponse returns LogListCommand for 'loglist'")
+    void readResponse_loglist() throws GitSwoleException {
+        assertInstanceOf(LogListCommand.class, parser.readResponse("loglist", workouts));
+    }
+
+    @Test
+    @DisplayName("readResponse throws INCOMPLETE_COMMAND for empty input")
+    void readResponse_emptyInput_throws() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> parser.readResponse("", workouts));
+        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("readResponse throws INCOMPLETE_COMMAND for 'mark' with no args")
+    void readResponse_markNoArgs_throws() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> parser.readResponse("mark", workouts));
+        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("readResponse throws INCOMPLETE_COMMAND for 'edit' with no args")
+    void readResponse_editNoArgs_throws() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> parser.readResponse("edit", workouts));
+        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("readResponse throws INCOMPLETE_COMMAND for 'log' with no args")
+    void readResponse_logNoArgs_throws() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> parser.readResponse("log", workouts));
+        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("parseValue returns null for null input")
+    void parseValue_nullInput_returnsNull() {
+        assertNull(Parser.parseValue(null, "w/"));
+    }
+
+    @Test
+    @DisplayName("parseValue returns null for null prefix")
+    void parseValue_nullPrefix_returnsNull() {
+        assertNull(Parser.parseValue("add w/push", null));
+    }
+
+    @Test
+    @DisplayName("parseValue returns null for blank prefix")
+    void parseValue_blankPrefix_returnsNull() {
+        assertNull(Parser.parseValue("add w/push", "  "));
+    }
+
+    @Test
+    @DisplayName("parseValue handles prefix at start of string")
+    void parseValue_prefixAtStart() {
+        assertEquals("push", Parser.parseValue("w/push", "w/"));
+    }
+
+    @Test
+    @DisplayName("parseValue returns null when value after prefix is empty")
+    void parseValue_emptyValue_returnsNull() {
+        assertNull(Parser.parseValue("add w/ e/bench", "w/"));
+    }
+
+    @Test
+    @DisplayName("parseValue extracts multi-word value")
+    void parseValue_multiWordValue() {
+        assertEquals("bench press", Parser.parseValue("add e/bench press wt/60", "e/"));
     }
 }
 //@@author
