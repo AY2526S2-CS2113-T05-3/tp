@@ -161,8 +161,9 @@ CLI-based CRUD application. The system is divided into four primary logic compon
 and `Storage`. These components interact with a central `Assets` data model to perform operations. The application is 
 designed to be extensible, allowing new commands and storage formats to be added with minimal friction by extending the 
 base `Command` class and utilizing dedicated storage handlers.
+
 ### Ethan's enhancement
-### Delete Feature
+#### 1. Delete Feature
 
 The delete mechanism is facilitated by the `DeleteCommand.java` class. It extends from the abstract class `Command` and overrides the `execute()` method, which throws the exception `GitSwoleException`, to execute the deletion of workouts/exercises.
 
@@ -194,8 +195,8 @@ When the user types in a command like the one shown above, it goes through the f
 This diagram shows the sequence in which the delete command is entered.
 
 <img src="diagrams/commands/delete/deleteSD-Sequence_Diagram__DeleteCommand.png" width="950" />
-#### Design Considerations
 
+#### Design Considerations
 **Alternative 1 (Considered): Delete by list index**
 
 The user specifies the target by its position number in the list (e.g. `delete 1`).
@@ -205,7 +206,7 @@ The user specifies the target by its position number in the list (e.g. `delete 1
 
 ---
 
-### Storage Feature
+#### Storage Feature
 
 The `Storage` class saves and loads the data from `WorkoutList` through a plaintext file on the hardware memory. When the application is started and run, the previous data is immediately loaded into the application.
 
@@ -314,37 +315,44 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 
 ### Vetri's Enhancement
 
-This enhancement introduces the core application skeleton and an in-place workout and exercise editing system.
-It is composed of the `GitSwole`, `Parser`, `Ui`, `Command`, `WorkoutList`, `Workout`, `Exercise`, and `EditCommand`
-classes.
+This enhancement introduces the help and exit commands, along with an in-place workout and exercise editing system.
+It is composed of the `HelpCommand`, `ExitCommand`, and `EditCommand` classes.
 
-#### 1. Core Application Architecture
+#### 1. Help Command (`HelpCommand`)
 
-The foundational structure establishes the lifecycle management, command dispatch, and data model for the entire
-application.
+The help feature displays a formatted reference of all available commands and their usage syntax directly in the 
+terminal.
 
 * **Implementation:**
-  `GitSwole` is the entry point. It calls `setupLogger()`, instantiates `Ui` and `Storage`, loads persisted data into a
-  `WorkoutList`, then enters the main read-execute loop via `run()`. The key classes are:
-    - `Parser`: Uses a `HashMap<String, CommandType>` for O(1) keyword lookups and exposes a reusable
-      `parseValue(input, flag)` static utility for flag extraction across all commands.
-    - `Ui`: Decouples all terminal I/O from command logic, reading raw input and rendering all output without any
-      knowledge of business logic.
-    - `Command`: Abstract base class enforcing a consistent `execute(WorkoutList, Ui)` interface that every command
-      subclass must implement.
-    - `Assets` (`WorkoutList`, `Workout`, `Exercise`): Models the domain with lookup methods such as
-      `getWorkoutByName()` and `getExerciseByName()` reused across multiple commands.
-
+  `HelpCommand` extends the base `Command` class. It stores all command descriptions in a 2D `String` array, where each
+  row contains a command's syntax, its corresponding description, and an example.
+* On `execute()`, it iterates through the array and renders each row through `Ui#showMessage()`.
 
 * **Design Considerations:**
-    - **Why it is implemented this way:** Separating concerns across `Ui`, `Parser`, `Command`, and `Assets` from the
-      outset allowed each team member to independently implement commands without coupling business logic to I/O or data
-      management.
-    - **Alternatives considered:** A monolithic class handling parsing, execution, and I/O together. This was rejected
-      as it would make unit testing very challenging and could create multiple merge conflicts across teammates working on
-      different commands simultaneously.
+    - **Why it is implemented this way:** Using a 2D array loop instead of hardcoded individual print statements makes
+      it trivial to add or update command entries — only the array data needs to change, not the rendering logic.
+    - **Alternatives considered:** A series of individual `Ui#showMessage()` calls, one per command. This was rejected
+      as it scatters the command reference data across multiple lines and makes maintenance error-prone.
 
-#### 2. Edit Workout and Exercise Feature (`EditCommand`)
+#### 2. Exit Command (`ExitCommand`)
+
+The exit feature cleanly terminates the application loop and displays a goodbye message.
+
+* **Implementation:**
+  `ExitCommand` extends the base `Command` class and overrides `isExit()` to return `true`. On `execute()`, it calls
+  `Ui#byeGreeting()` to display the farewell message. The main loop in `GitSwole` checks `Command#isExit()` after every
+  command execution and breaks out of the loop when `true` is returned, triggering a clean shutdown.
+
+* **Design Considerations:**
+    - **Why it is implemented this way:** Encoding the exit signal as an override of `isExit()` in the base `Command`
+      class keeps the main loop uniform, every iteration checks the same method regardless of which command ran,
+      with no special-casing needed for the exit path.
+    - **Alternatives considered:** Throwing a dedicated `ExitException` to break out of the loop within `run()`.
+      This was rejected because using exceptions for control flow is considered bad practice, as exceptions should
+      signal unexpected errors, not a normal user-initiated shutdown. Declaring `ExitCommand` as a subclass of
+      `Command` keeps the exit path uniform with every other command, requiring no special-casing in the main loop.
+
+#### 3. Edit Workout and Exercise Feature (`EditCommand`)
 
 The edit feature allows users to rename an existing workout or modify the details of
 a specific exercise within a workout. It is facilitated by `EditCommand`, which interacts
@@ -412,7 +420,7 @@ no changes were recorded.
 
 The following sequence diagram shows how `edit w/Push Day e/Bench Press` is handled:
 
-<img src="diagrams/commands/edit/EditCommand.png" width="1047" />
+<img src="diagrams/commands/edit/EditCommand.png" width="1047"/>
 
 #### Design Considerations
 
