@@ -609,6 +609,13 @@ to accomplish tasks faster than using a mouse in a GUI.
 
 ## Instructions for Manual Testing
 
+### Help
+
+1. Enter `help`.
+2. Expected output: A formatted table listing all available commands, their syntax, and examples.
+
+---
+
 ### Storage
 
 1. Add a workout and exercise:
@@ -618,7 +625,28 @@ to accomplish tasks faster than using a mouse in a GUI.
    ```
 2. Enter `exit` to close GitSwole.
 3. Relaunch the application.
-4. Enter `list` or `list w/WORKOUT` — you should see the previously added workouts and exercises.
+4. Enter `list` , `list all` or `list w/WORKOUT` - you should see the previously added workouts and exercises.
+
+---
+### List
+
+1. Add multiple workouts and exercises:  
+    ```
+    add w/push  
+    add w/pull  
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/pull up w/pull wt/0 s/4 r/8
+    ```
+2. List all workouts: ```list```  
+**Expected output:** Both `push` and `pull` workouts are shown.
+
+3. List all workouts and their exercises: ```list all```  
+**Expected output:** Both workouts are shown with their respective exercises listed beneath.
+
+4. List exercises under a specific workout: ```list w/push```  
+**Expected output:** Only `bench press` is shown under `push`.
+
+---
 
 ### Delete
 
@@ -637,3 +665,248 @@ to accomplish tasks faster than using a mouse in a GUI.
    ```
 4. Expected output: `Successfully deleted 'bench press' from 'push'!`
 5. Confirm removal - `list w/push` should now return an empty exercise list.
+
+---
+
+### Edit
+1. Add a workout and exercise:
+    ```   
+    add w/push
+    add e/bench press w/push wt/80 s/3 r/10
+    ```
+2. Rename the workout:
+    ```   
+    edit w/push
+    ```
+3. Rename the exercise:
+    ```   
+    edit w/push e/bench press
+    ```
+   > Here it can be `push` or a new workout name from **Step 2**.
+
+---
+
+### Log
+1. Set up a workout with exercises:
+    ```   
+    add w/push
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/shoulder press w/push wt/50 s/3 r/12
+    ```
+2. Start a logging session for the workout:
+   ```
+    log w/push
+   ```  
+   **Expected output**: Session started for `push`.
+3. Log an exercise within the session:
+    ```   
+    log e/bench press
+    ```  
+   **Expected output:** Stats updated for `bench press` in `push`.
+4. Log an exercise with a remark:  
+   ```
+   log e/shoulder press remark/felt strong today
+   ```
+   **Expected output:** Stats updated for `shoulder press`. Remark felt strong today is saved.
+
+---
+
+### LogList
+1. Ensure at least one prior logging session exists (complete the Log section above first).
+2. View all past logged sessions:
+    ```
+    loglist
+    ```
+    **Expected output:** A chronological list of all logged workout sessions, showing the workout name, date/time, exercises logged, and any remarks.
+3. View logs for a specific workout:
+    ```
+    loglist w/push
+    ```
+    **Expected output:** Only sessions logged under push are displayed.
+
+---
+
+### Find
+1. Add workouts and exercises with varied names:
+    ```
+    add w/push
+    add w/pull
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/bent over row w/pull wt/60 s/3 r/10
+    add e/bicep curl w/pull wt/20 s/3 r/12
+    ```
+2. Search for exercises by keyword:
+    ```   
+    find e/bench w/push
+    ```
+   **Expected output:** ``bench press`` is listed as a match.
+3. Search for a keyword that matches multiple entries:
+    ```   
+    find e/b w/push
+    ```
+   **Expected output:** `bench press`, `bent over row`, and `bicep curl` are all listed.
+4. Search for a keyword with no matches:
+    ```   
+    find e/squat w/legs
+    ```
+   **Expected output:** A message indicating no matching exercises were found.
+
+---
+
+### Expected Workflow
+Following are the expected results from the Manual Testing:
+
+#### Welcome page:
+```
+____________________________________________________________________________________________________
+|     ______      __   _____                   __
+|    / ____/ (_)_/ /_ / ___/__   ___  __ ___  / /  _______   
+|   / / __  / //_ __/ \_ \_ \ \  | | / / __ \/ /  / /__/ /  
+|  / /_/ / / / / /_ ___/  /  \ \ / |/ / /_/ / /__/ _____/
+|  \____/ /_/ \__/ \_____/    \__/|__/\____/____/\_____/    
+|                                       
+| Welcome to GitSwole! (@w@)/
+| First time using it? Type 'help' to see what ya got!
+| v2.0 | 31 Mar 2026
+____________________________________________________________________________________________________
+| PROGRESS SNAPSHOT
+| Workouts logged  : 0
+| Workouts done    : 0 / 0
+| Total exercises  : 0
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+| Daily quote:"Your body can stand almost anything. It's your mind you have to convince."
+____________________________________________________________________________________________________
+```
+#### Add:
+```
+add w/push
+Successfully added a push session! Remember to add your exercises :)
+____________________________________________________________________________________________________
+add e/bench press w/push wt/80 s/3 r/10
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+list
+Your Workouts:
+1. [ ]push
+____________________________________________________________________________________________________
+add w/pull  
+Successfully added a pull session! Remember to add your exercises :)
+____________________________________________________________________________________________________
+add e/pull up w/pull wt/0 s/4 r/8
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+```
+#### List:
+```
+list
+Your Workouts:
+1. [ ]push
+2. [ ]pull
+____________________________________________________________________________________________________
+list w/push
+[ ] PUSH Workout Exercises:
+1. bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+```
+#### Delete:
+```
+delete e/bench press w/push
+Successfully deleted 'bench press' from 'push'!
+list w/push
+[ ] PUSH Workout Exercises:
+Your exercises list is currently empty :(
+____________________________________________________________________________________________________
+add e/bench press w/push wt/80 s/3 r/10
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+```
+#### Edit:
+```
+edit w/push
+CURRENT WORKOUT: push
+Enter the new values below (press enter to NOT edit):
+Edit fields (e.g. wn/NewName):
+wn/chest day
+Change Recorded! Edited Workout:
+____________________________________________________________________________________________________
+[ ][CHEST DAY]
+1. bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+edit w/chest day e/bench press
+bench press
+CURRENT WORKOUT: chest day
+bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+Enter the new values below (press enter to NOT edit):
+Edit fields (e.g. wn/NewWorkout en/NewExercise wt/100 s/3 r/10):
+wn/push wt/90 s/3 r/8
+Change Recorded! Edited Workout:
+____________________________________________________________________________________________________
+[ ][PUSH]
+1. bench press (90kg | 3s | 8r)
+____________________________________________________________________________________________________
+```
+#### Log:
+```
+____________________________________________________________________________________________________
+add e/shoulder press w/push wt/50 s/3 r/12    
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+log w/push
+Session started for push! Let's get those gains.
+____________________________________________________________________________________________________
+PUSH Workout Exercises:
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+Continue to log your workout by: log e/EXERCISE wt/WEIGHT s/SETS r/REPS remark/REMARK
+____________________________________________________________________________________________________
+log e/bench press                         
+Stats updated for bench press in push!
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+log e/shoulder press remark/lightweight babyy
+Stats updated for shoulder press in push!
+Remark added: lightweight babyy
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+```
+#### Log List:
+```
+loglist
+=== COMPLETE LOG HISTORY ===
+[31-03-2026, 21:51] PUSH workout
+bench press:      :   90kg |  3 sets |  8 reps
+shoulder press:   :   50kg |  3 sets | 12 reps
+  Remark: lightweight babyy
+____________________________________________________________________________________________________
+loglist w/push
+=== LOG HISTORY FOR: PUSH ===
+[31-03-2026, 21:51] PUSH workout
+bench press:      :   90kg |  3 sets |  8 reps
+shoulder press:   :   50kg |  3 sets | 12 reps
+  Remark: lightweight babyy
+____________________________________________________________________________________________________
+```
+
+#### Find:
+```
+find e/bench w/push
+bench press | Weight: 90kg | Sets: 3 | Reps: 8
+____________________________________________________________________________________________________
+find e/squat w/legs
+____________________________________________________________________________________________________
+Workout does not exist. Try again...
+____________________________________________________________________________________________________
+```
+#### Exit:
+```
+exit
+____________________________________________________________________________________________________
+Bye! Keep getting swole!
+____________________________________________________________________________________________________
+```
