@@ -158,6 +158,25 @@ public class LogCommand extends Command {
         int sets = Parser.parseOptionalInt(response, "s/", exercise.getSets());
         int reps = Parser.parseOptionalInt(response, "r/", exercise.getReps());
 
+        if (weight < 0) {
+            throw new GitSwoleException(
+                GitSwoleException.ErrorType.NEG_INPUT,
+                "Weight cannot be negative. Usage: wt/WEIGHT (e.g. wt/40)"
+            );
+        }
+        if (sets < 0) {
+            throw new GitSwoleException(
+                GitSwoleException.ErrorType.NEG_INPUT,
+                "Sets cannot be negative. Usage: s/SETS (e.g. s/3)"
+            );
+        }
+        if (reps < 0) {
+            throw new GitSwoleException(
+                GitSwoleException.ErrorType.NEG_INPUT,
+                "Reps cannot be negative. Usage: r/REPS (e.g. r/8)"
+            );
+        }
+
         exercise.setWeight(weight);
         exercise.setSets(sets);
         exercise.setReps(reps);
