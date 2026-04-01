@@ -294,7 +294,9 @@ GitSwole maintains two data files, both created automatically on first run:
 
 Saving is fully automatic — every mutating command (`add`, `delete`, `edit`, `mark`, `log`) writes changes to disk immediately. There is no manual "save" command. On the next launch, GitSwole reloads your data from these files.
 
-> **Note:** The `|` character is used internally as a field delimiter. If your workout or exercise names contain ` | `, it will be escaped automatically, but it is best to avoid this character in names to prevent confusion when reading the raw file.
+> **Note:** The ```|``` character is used internally as a field delimiter. 
+> If your workout or exercise names contain ```|```, it will be escaped automatically, 
+> but it is best to avoid this character in names to prevent confusion when reading the raw file.  
 
 > **Note:** You may edit `data/workouts.txt` or `data/history.txt` by hand, but malformed entries may cause loading errors. Always keep a backup before manual edits.
  
@@ -518,6 +520,7 @@ A: GitSwole will display an error message. Type `help` to see the list of valid 
 ---
 
 ## Command Summary
+
 | Action | Format | Example |
 |--------|--------|---------|
 | Add workout | `add w/WORKOUT` | `add w/push` |
