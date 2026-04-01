@@ -56,3 +56,11 @@ tasks.withType(JavaCompile) {
 application {
     applicationDefaultJvmArgs = ["-Dfile.encoding=UTF-8"]
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'seedu.gitswole.GitSwole'
+        )
+    }
+}
