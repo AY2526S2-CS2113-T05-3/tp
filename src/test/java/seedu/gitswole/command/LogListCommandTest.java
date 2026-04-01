@@ -184,4 +184,24 @@ class LogListCommandTest {
         assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
         assertTrue(ex.getCommand().startsWith("Could not read history log:"));
     }
+
+    @Test
+    @DisplayName("loglist w/push - IOException throws DEFAULT")
+    void execute_workoutFilterIOException_throwsDefault() {
+        historyStub.throwOnWorkoutEntries = true;
+
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> new LogListCommand("loglist w/push", historyStub).execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
+    }
+
+    @Test
+    @DisplayName("loglist d/24-03-2026 - IOException throws DEFAULT")
+    void execute_dateFilterIOException_throwsDefault() {
+        historyStub.throwOnDateEntries = true;
+
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> new LogListCommand("loglist d/24-03-2026", historyStub).execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
+    }
 }

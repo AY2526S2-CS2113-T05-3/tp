@@ -1,17 +1,56 @@
 # Developer Guide
+## Table of Contents
+1. [Setup Guide](#setup-guide)
+
+2. [Design](#design)
+    - [UI Component](#ui-component)
+    - [Parser Component](#parser-component)
+    - [Command Component](#command-component)
+    - [Storage Component](#storage-component)
+
+3. [Implementation](#implementation)
+    - [Ethan's Enhancement](#ethans-enhancement)
+        - [Delete Feature](#1-delete-feature)
+        - [Storage Feature](#2-storage-feature)
+    - [Praveen's Enhancement](#praveens-enhancement)
+        - [Tiered Listing Feature (`ListCommand`)](#1-tiered-listing-feature-listcommand)
+        - [Smart Workout Logging (`LogCommand`)](#2-smart-workout-logging-logcommand)
+        - [Persistent History Storage (`HistoryStorage`)](#3-persistent-history-storage-historystorage--historytxt)
+    - [ShuoJie's Enhancement](#shuojies-enhancement)
+        - [History Retrieval (`LogList`)](#1-history-retrieval-loglist)
+    - [Vetri's Enhancement](#vetris-enhancement)
+        - [Help Command (`HelpCommand`)](#1-help-command-helpcommand)
+        - [Exit Command (`ExitCommand`)](#2-exit-command-exitcommand)
+        - [Edit Workout and Exercise Feature (`EditCommand`)](#3-edit-workout-and-exercise-feature-editcommand)
+    - [Wan's Enhancement](#wans-enhancement)
+        - [Keyword-Based Find Feature (`FindCommand`)](#1-keyword-based-find-feature-findcommand)
+
+4. [Product Scope](#product-scope)
+    - [Target User Profile](#target-user-profile)
+    - [Value Proposition](#value-proposition)
+
+5. [User Stories](#user-stories)
+
+6. [Non-Functional Requirements](#non-functional-requirements)
+
+7. [Glossary](#glossary)
+
+8. [Instructions for Manual Testing](#instructions-for-manual-testing)
 
 ## Setup Guide
 ### Steps
 1. Clone the repository to your local machine:
    ```bash
    git clone https://github.com/AY2526S2-CS2113-W10-3/tp
-2. navigate into the project directory:
+   ```
+2. Navigate into the project directory:
    ```bash
    cd tp
+   ```
 3. Run the application using Gradle:
    ```bash
    ./gradlew run
-
+    ```
 ## Design
 
 The **Architecture Diagram** below gives a high-level design overview of GitSwole.
@@ -20,7 +59,7 @@ The **Architecture Diagram** below gives a high-level design overview of GitSwol
 
 Given below is a quick overview of the main components and how they interact with each other.
 
-#### Main components of the architecture
+### Main components of the architecture
 
 **`GitSwole`** (the class `GitSwole.java`) is in charge of app launch and shut down:
 - **At app launch:** It calls `setupLogger()`, instantiates `Ui` and `Storage`, loads persisted workout data into a `WorkoutList`, then enters the main command loop via `run()`.
@@ -34,12 +73,12 @@ The bulk of the app's work is done by the following four components:
 
 **`Assets`** represents the in-memory data model, consisting of `WorkoutList`, `Workout`, and `Exercise`. **`Commons`** contains shared utility classes (e.g., `GitSwoleException`) used across all components.
 
-#### How the architecture components interact with each other
+### How the architecture components interact with each other
 
 The *Sequence Diagram* below shows how the components interact with each other for the scenario 
 where the user issues the command `add w/Push Day`.
 
-<img src="diagrams/architecture/architectureSequenceDiagram.png" width="982" />
+<img src="diagrams/architecture/ArchitectureSequenceDiagram.png" width="648" />
 
 Each of the four main components:
 - defines its API through a well-scoped class boundary.
@@ -159,8 +198,9 @@ CLI-based CRUD application. The system is divided into four primary logic compon
 and `Storage`. These components interact with a central `Assets` data model to perform operations. The application is 
 designed to be extensible, allowing new commands and storage formats to be added with minimal friction by extending the 
 base `Command` class and utilizing dedicated storage handlers.
+
 ### Ethan's enhancement
-### Delete Feature
+#### 1. Delete Feature
 
 The delete mechanism is facilitated by the `DeleteCommand.java` class. It extends from the abstract class `Command` and overrides the `execute()` method, which throws the exception `GitSwoleException`, to execute the deletion of workouts/exercises.
 
@@ -175,7 +215,7 @@ delete e/bench press w/pushday
 delete w/pushday
 ```
 
-#### Architecture & Component Level Design
+#### Architecture and Component Level Design
 
 When the user types in a command like the one shown above, it goes through the following process:
 
@@ -187,13 +227,7 @@ When the user types in a command like the one shown above, it goes through the f
 
 4. **Ui:** The result (success or not found) is reported back to the user via `Ui#showMessage()`.
 
-#### Sequence Diagram
-
-This diagram shows the sequence in which the delete command is entered.
-
-<img src="diagrams/commands/delete/deleteSD-Sequence_Diagram__DeleteCommand.png" width="950" />
 #### Design Considerations
-
 **Alternative 1 (Considered): Delete by list index**
 
 The user specifies the target by its position number in the list (e.g. `delete 1`).
@@ -201,9 +235,14 @@ The user specifies the target by its position number in the list (e.g. `delete 1
 - **Pros:** Much faster typing, as you do not need to type in the flags, and if you know the index of the workout that you want to delete.
 - **Cons:** The user must first list the workouts in the list, then find their workout index, which might take an even longer time. Therefore, we decided to stick with the current implementation of using flags in our command.
 
----
 
-### Storage Feature
+#### Sequence Diagram
+
+This diagram shows the sequence in which the delete command is entered.
+
+<img src="diagrams/commands/delete/deleteSD-Sequence_Diagram__DeleteCommand.png" width="950" />
+
+#### 2. Storage Feature
 
 The `Storage` class saves and loads the data from `WorkoutList` through a plaintext file on the hardware memory. When the application is started and run, the previous data is immediately loaded into the application.
 
@@ -232,8 +271,8 @@ Each workout block consists of:
 
 <img src="diagrams/architecture/Storage/StorageLoad-Sequence_Diagram__Storage_load__.png" width="742" />
 
- 
 ---
+
 ### Praveen's enhancement
 
 This enhancement introduces a robust workout logging and history tracking system, along with a multi-tiered listing 
@@ -293,7 +332,7 @@ If a user makes a typo and re-logs the same exercise, the previous entry is corr
     - **Alternatives considered:** Append-only logging. While easier to implement, it leads to "data bloat" and 
 makes it difficult for users to correct mistakes.
 
-#### 4. Sequence Diagrams
+#### Sequence Diagrams
 
 The following sequence diagram illustrates how the `ListCommand` determines the scope of the listing and interacts with the `WorkoutList` and `Ui` components:
 
@@ -310,7 +349,9 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 ---
 ### ShuoJie's enhancement: History Retrieval (`loglist`)
 
-The `LogList` enhancement provides users with a dedicated way to view their past workout sessions chronologically. While the standard `list` command displays workout routines (templates), `loglist` retrieves actual performed data from the persistent history file.
+The `LogList` enhancement provides users with a dedicated way to view their past workout sessions chronologically. While the standard `list` command displays workout templates (routines), `loglist` retrieves actual performed data from the persistent history file.
+
+#### 1. History Retrieval (`LogList`)
 
 #### Implementation
 
@@ -333,12 +374,6 @@ This allows for **Dependency Injection**. In the production environment, the app
 1.  **Isolated:** Tests do not fail if the actual `history.txt` file is missing or corrupted.
 2.  **Deterministic:** The test always receives the exact same mock data, making it reliable across different developer machines.
 
-#### Sequence Diagram
-
-The diagram below illustrates the interaction between the Command, the Parser, and the Storage component during a filtered history request (e.g., `loglist d/24-03-2026`).
-
-<img src="diagrams/commands/loglist/loglistSD.png" width="700" />
-
 #### Design Considerations
 
 **Aspect: Data Retrieval Strategy**
@@ -348,15 +383,61 @@ The diagram below illustrates the interaction between the Command, the Parser, a
     *   **Cons:** Incurs a small File I/O overhead each time the command is run.
     *   **Reason for Choosing:** Since `loglist` is a diagnostic command rather than a high-frequency entry command (like `add`), the trade-off of a few milliseconds of disk access for significantly lower RAM usage is optimal for a CLI tool.
 
-*   **Alternative 2: In-memory Caching of History.**
-    *   **Pros:** Instantaneous response times for the user.
-    *   **Cons:** As the history file grows over months of usage, keeping the entire log history in an `ArrayList` in memory would lead to "data bloat" and potential performance degradation on lower-end systems.
 
-**Aspect: Error Handling in History Retrieval**
+#### Sequence Diagram
 
-The implementation includes defensive checks for `IOException` during the file-read phase. If the `history.txt` file is inaccessible, the command catches the low-level error and re-throws a `GitSwoleException` with a user-friendly message, preventing the application from crashing and maintaining a "defensive" coding posture.
+The diagram below shows how the components interact when a user requests to see their workout history.
 
-### Edit Workout Feature
+<img src="diagrams/commands/loglist/loglistSD.png" width="700" />
+
+---
+
+### Vetri's Enhancement
+
+This enhancement introduces the help and exit commands, along with an in-place workout and exercise editing system.
+It is composed of the `HelpCommand`, `ExitCommand`, and `EditCommand` classes.
+
+#### 1. Help Command (`HelpCommand`)
+
+The help feature displays a formatted reference of all available commands and their usage syntax directly in the 
+terminal.
+
+* **Implementation:**
+  `HelpCommand` extends the base `Command` class. It stores all command descriptions in a 2D `String` array, where each
+  row contains a command's syntax, its corresponding description, and an example.
+* On `execute()`, it iterates through the array and renders each row through `Ui#showMessage()`.
+
+* **Design Considerations:**
+    - **Why it is implemented this way:** Using a 2D array loop instead of hardcoded individual print statements makes
+      it trivial to add or update command entries — only the array data needs to change, not the rendering logic.
+    - **Alternatives considered:** A series of individual `Ui#showMessage()` calls, one per command. This was rejected
+      as it scatters the command reference data across multiple lines and makes maintenance error-prone.
+
+**Sequence Diagram:**  
+<img src="diagrams/commands/help/HelpCommand.png" width="600"/>
+
+#### 2. Exit Command (`ExitCommand`)
+
+The exit feature cleanly terminates the application loop and displays a goodbye message.
+
+* **Implementation:**
+  `ExitCommand` extends the base `Command` class and overrides `isExit()` to return `true`. On `execute()`, it calls
+  `Ui#byeGreeting()` to display the farewell message. The main loop in `GitSwole` checks `Command#isExit()` after every
+  command execution and breaks out of the loop when `true` is returned, triggering a clean shutdown.
+
+* **Design Considerations:**
+    - **Why it is implemented this way:** Encoding the exit signal as an override of `isExit()` in the base `Command`
+      class keeps the main loop uniform, every iteration checks the same method regardless of which command ran,
+      with no special-casing needed for the exit path.
+    - **Alternatives considered:** Throwing a dedicated `ExitException` to break out of the loop within `run()`.
+      This was rejected because using exceptions for control flow is considered bad practice, as exceptions should
+      signal unexpected errors, not a normal user-initiated shutdown. Declaring `ExitCommand` as a subclass of
+      `Command` keeps the exit path uniform with every other command, requiring no special-casing in the main loop.
+
+**Sequence Diagram:**  
+<img src="diagrams/commands/exit/ExitCommand.png" width="600"/>
+
+#### 3. Edit Workout and Exercise Feature (`EditCommand`)
 
 The edit feature allows users to rename an existing workout or modify the details of
 a specific exercise within a workout. It is facilitated by `EditCommand`, which interacts
@@ -409,7 +490,7 @@ Given below is an example usage scenario for `edit w/Push Day e/Bench Press` and
 to retrieve the `Workout` object, then `Workout#getExerciseByName()` to retrieve the
 `Exercise` object. A `GitSwoleException` is thrown if either is not found.
 
-**Step 4.** The current workout and exercise details are2 printed via `Ui#printExercise()`.
+**Step 4.** The current workout and exercise details are printed via `Ui#printExercise()`.
 `Ui#readLine()` is called to collect the user's edit input in the format
 `wn/NewWorkout en/NewExercise wt/100 s/3 r/10`. Fields not provided are left unchanged.
 
@@ -421,10 +502,6 @@ field that is modified.
 **Step 6.** `printUpdatedWorkout()` checks `hasChanged`. If `true`, it calls
 `Ui#printWorkout()` to show the updated workout. Otherwise, it notifies the user that
 no changes were recorded.
-
-The following sequence diagram shows how `edit w/Push Day e/Bench Press` is handled:
-
-<img src="diagrams/commands/edit/EditCommand.png" width="1047" />
 
 #### Design Considerations
 
@@ -441,33 +518,401 @@ The following sequence diagram shows how `edit w/Push Day e/Bench Press` is hand
     - Cons: Longer process and seasoned user would be more comfortable typing all changes in one line.
       (e.g: `wn/push en/bench wt/100 s/3 r/10`)
 
-## Product scope
-### Target user profile
 
-{Describe the target user profile}
+**Sequence Diagram:**
 
-### Value proposition
+<img src="diagrams/commands/edit/EditCommand.png" width="1047"/>
 
-{Describe the value proposition: what problem does it solve?}
+---
+
+### Wan's Enhancement
+
+This enhancement introduces the search capability, which allows users to quickly locate workouts and exercises
+within the application. It is composed of the `FindCommand` class.
+
+####  1. Keyword-Based Find Feature (`FindCommand`)
+
+The find mechanism allows users to search their data to two levels of extent — across all workouts, or within
+a specific workout's exercise list.
+
+**Implementation:**  
+* `FindCommand` extends the base `Command` class and overrides `execute()`. It uses flag detection on the raw input 
+    string to route execution to one of two helper methods:
+
+* `handleFindWorkout()`: Triggered by `find w/WORKOUT`. Scans all entries in `WorkoutList` via
+`WorkoutList#getWorkouts()` using case-insensitive keyword matching, then displays each match's name and
+exercise count.
+* `handleFindExercise()`: Triggered by `find e/EXERCISE w/WORKOUT`. First calls
+`WorkoutList#getWorkoutByName()` to pin down the target workout, then iterates its exercise list for matches,
+displaying name, weight, sets, and reps per result.
+*   In both cases, results are surfaced through `Ui#showMessage()`. If no matches are found, a "Not Found" message
+is displayed.
+
+**Design Considerations:**
+    
+**Why it is implemented this way:** Centralising both search variants within a single `FindCommand` class
+      keeps the flag-routing logic cohesive and avoids complicating the command hierarchy. The two-level search
+      (workout vs. exercise) mirrors the natural hierarchy of the data model, making the feature easy to use.
+
+**Alternatives considered:** Creating separate `FindWorkoutCommand` and `FindExerciseCommand` classes. This
+      was rejected as it would complicate the parser and duplicate the shared flag-parsing and result-display logic.
+
+**Sequence Diagram:**
+
+The following sequence diagram illustrates how `FindCommand` determines the search scope and interacts with
+`WorkoutList` and `Ui`:
+
+<img src="diagrams/commands/find/FindCommand.png" width="700" />
+
+---
+
+## Product Scope
+
+### Target User Profile
+
+* Prefers typing over using a mouse.
+* Is comfortable with command-line interfaces.
+* Needs a fast and intuitive way to manage their workout logging.
+* Can type fast and prefers keyboard shortcuts.
+
+### Value Proposition
+
+GitSwole enables fitness-focused CLI users to manage, log, and track workouts entirely from the terminal — faster and with less friction than any GUI-based alternative.  
+
+---
 
 ## User Stories
 
-|Version| As a ... | I want to ... | So that I can ...|
-|--------|----------|---------------|------------------|
-|v1.0|new user|see usage instructions|refer to them when I forget how to use the application|
-|v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
+| Version | As a ...          | I want to ...                                                                             | So that I can ...                                                              |
+|---------|-------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| v1.0    | new user          | see all available commands and their usage syntax                                         | quickly learn how to use the application without referring to external docs    |
+| v1.0    | gym-goer          | add workouts and exercises with their weight, sets, and reps                              | build and keep track of my training routine                                    |
+| v2.0    | methodical user   | edit the name or details of an existing workout or exercise                               | correct mistakes or update my training plan without deleting and re-adding     |
+| v2.0    | committed fitspo  | view all my past logged workout sessions in a single command                              | identify trends or gaps in my routine and plan my next workout better          |
+| v2.0    | reflective gym-goer | log remarks for each exercise during a session                                          | remember how each session felt and track qualitative progress over time        |
+
+
+---
+
 
 ## Non-Functional Requirements
-Performance:
-Security:
-Maintainability:
-Portability:
-{Give non-functional requirements}
+
+* **Environment**: Should work on any mainstream OS (Windows, Linux, macOS) as long as Java 11 or above is installed.
+* **Performance**: The system should respond to user inputs within 100ms to ensure a seamless typing experience.
+* **Data Integrity**: Data should be saved automatically to a local text file after every mutating command (add, delete, mark)
+to prevent data loss during unexpected closures.
+*  **Usability**: A user with above-average typing speed for regular English text (i.e., not necessarily code) should be able 
+to accomplish tasks faster than using a mouse in a GUI.
+
+---
 
 ## Glossary
 
-* *glossary item* - Definition
+* **CLI** - Command Line Interface. A text-based user interface used to interact with the software.
+* **Index** — The 1-based numerical position of a task as currently displayed in the list.
 
-## Instructions for manual testing
+---
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+## Instructions for Manual Testing
+
+### Help
+
+1. Enter `help`.
+2. Expected output: A formatted table listing all available commands, their syntax, and examples.
+
+---
+
+### Storage
+
+1. Add a workout and exercise:
+   ```
+   add w/push
+   add e/bench press w/push wt/80 s/3 r/10
+   ```
+2. Enter `exit` to close GitSwole.
+3. Relaunch the application.
+4. Enter `list` , `list all` or `list w/WORKOUT` - you should see the previously added workouts and exercises.
+
+---
+### List
+
+1. Add multiple workouts and exercises:  
+    ```
+    add w/push  
+    add w/pull  
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/pull up w/pull wt/0 s/4 r/8
+    ```
+2. List all workouts: ```list```  
+**Expected output:** Both `push` and `pull` workouts are shown.
+
+3. List all workouts and their exercises: ```list all```  
+**Expected output:** Both workouts are shown with their respective exercises listed beneath.
+
+4. List exercises under a specific workout: ```list w/push```  
+**Expected output:** Only `bench press` is shown under `push`.
+
+---
+
+### Delete
+
+1. Add a workout and exercise:
+   ```
+   add w/push
+   add e/bench press w/push wt/80 s/3 r/10
+   ```
+2. Confirm the workout and exercise exist:
+   ```
+   list w/push
+   ```
+3. Delete the exercise:
+   ```
+   delete e/bench press w/push
+   ```
+4. Expected output: `Successfully deleted 'bench press' from 'push'!`
+5. Confirm removal - `list w/push` should now return an empty exercise list.
+
+---
+
+### Edit
+1. Add a workout and exercise:
+    ```   
+    add w/push
+    add e/bench press w/push wt/80 s/3 r/10
+    ```
+2. Rename the workout:
+    ```   
+    edit w/push
+    ```
+3. Rename the exercise:
+    ```   
+    edit w/push e/bench press
+    ```
+   > Here it can be `push` or a new workout name from **Step 2**.
+
+---
+
+### Log
+1. Set up a workout with exercises:
+    ```   
+    add w/push
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/shoulder press w/push wt/50 s/3 r/12
+    ```
+2. Start a logging session for the workout:
+   ```
+    log w/push
+   ```  
+   **Expected output**: Session started for `push`.
+3. Log an exercise within the session:
+    ```   
+    log e/bench press
+    ```  
+   **Expected output:** Stats updated for `bench press` in `push`.
+4. Log an exercise with a remark:  
+   ```
+   log e/shoulder press remark/felt strong today
+   ```
+   **Expected output:** Stats updated for `shoulder press`. Remark felt strong today is saved.
+
+---
+
+### LogList
+1. Ensure at least one prior logging session exists (complete the Log section above first).
+2. View all past logged sessions:
+    ```
+    loglist
+    ```
+    **Expected output:** A chronological list of all logged workout sessions, showing the workout name, date/time, exercises logged, and any remarks.
+3. View logs for a specific workout:
+    ```
+    loglist w/push
+    ```
+    **Expected output:** Only sessions logged under push are displayed.
+
+---
+
+### Find
+1. Add workouts and exercises with varied names:
+    ```
+    add w/push
+    add w/pull
+    add e/bench press w/push wt/80 s/3 r/10
+    add e/bent over row w/pull wt/60 s/3 r/10
+    add e/bicep curl w/pull wt/20 s/3 r/12
+    ```
+2. Search for exercises by keyword:
+    ```   
+    find e/bench w/push
+    ```
+   **Expected output:** ``bench press`` is listed as a match.
+3. Search for a keyword that matches multiple entries:
+    ```   
+    find e/b w/push
+    ```
+   **Expected output:** `bench press`, `bent over row`, and `bicep curl` are all listed.
+4. Search for a keyword with no matches:
+    ```   
+    find e/squat w/legs
+    ```
+   **Expected output:** A message indicating no matching exercises were found.
+
+---
+
+### Expected Workflow
+Following are the expected results from the Manual Testing:
+
+#### Welcome page:
+```
+____________________________________________________________________________________________________
+|     ______      __   _____                   __
+|    / ____/ (_)_/ /_ / ___/__   ___  __ ___  / /  _______   
+|   / / __  / //_ __/ \_ \_ \ \  | | / / __ \/ /  / /__/ /  
+|  / /_/ / / / / /_ ___/  /  \ \ / |/ / /_/ / /__/ _____/
+|  \____/ /_/ \__/ \_____/    \__/|__/\____/____/\_____/    
+|                                       
+| Welcome to GitSwole! (@w@)/
+| First time using it? Type 'help' to see what ya got!
+| v2.0 | 31 Mar 2026
+____________________________________________________________________________________________________
+| PROGRESS SNAPSHOT
+| Workouts logged  : 0
+| Workouts done    : 0 / 0
+| Total exercises  : 0
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+| Daily quote:"Your body can stand almost anything. It's your mind you have to convince."
+____________________________________________________________________________________________________
+```
+#### Add:
+```
+add w/push
+Successfully added a push session! Remember to add your exercises :)
+____________________________________________________________________________________________________
+add e/bench press w/push wt/80 s/3 r/10
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+list
+Your Workouts:
+1. [ ]push
+____________________________________________________________________________________________________
+add w/pull  
+Successfully added a pull session! Remember to add your exercises :)
+____________________________________________________________________________________________________
+add e/pull up w/pull wt/0 s/4 r/8
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+```
+#### List:
+```
+list
+Your Workouts:
+1. [ ]push
+2. [ ]pull
+____________________________________________________________________________________________________
+list w/push
+[ ] PUSH Workout Exercises:
+1. bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+```
+#### Delete:
+```
+delete e/bench press w/push
+Successfully deleted 'bench press' from 'push'!
+list w/push
+[ ] PUSH Workout Exercises:
+Your exercises list is currently empty :(
+____________________________________________________________________________________________________
+add e/bench press w/push wt/80 s/3 r/10
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+```
+#### Edit:
+```
+edit w/push
+CURRENT WORKOUT: push
+Enter the new values below (press enter to NOT edit):
+Edit fields (e.g. wn/NewName):
+wn/chest day
+Change Recorded! Edited Workout:
+____________________________________________________________________________________________________
+[ ][CHEST DAY]
+1. bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+edit w/chest day e/bench press
+bench press
+CURRENT WORKOUT: chest day
+bench press (80kg | 3s | 10r)
+____________________________________________________________________________________________________
+Enter the new values below (press enter to NOT edit):
+Edit fields (e.g. wn/NewWorkout en/NewExercise wt/100 s/3 r/10):
+wn/push wt/90 s/3 r/8
+Change Recorded! Edited Workout:
+____________________________________________________________________________________________________
+[ ][PUSH]
+1. bench press (90kg | 3s | 8r)
+____________________________________________________________________________________________________
+```
+#### Log:
+```
+____________________________________________________________________________________________________
+add e/shoulder press w/push wt/50 s/3 r/12    
+Your exercise has been successfully added! Looking swole g
+____________________________________________________________________________________________________
+log w/push
+Session started for push! Let's get those gains.
+____________________________________________________________________________________________________
+PUSH Workout Exercises:
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+Continue to log your workout by: log e/EXERCISE wt/WEIGHT s/SETS r/REPS remark/REMARK
+____________________________________________________________________________________________________
+log e/bench press                         
+Stats updated for bench press in push!
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+log e/shoulder press remark/lightweight babyy
+Stats updated for shoulder press in push!
+Remark added: lightweight babyy
+ 1. bench press (90kg | 3s | 8r)
+ 2. shoulder press (50kg | 3s | 12r)
+____________________________________________________________________________________________________
+```
+#### Log List:
+```
+loglist
+=== COMPLETE LOG HISTORY ===
+[31-03-2026, 21:51] PUSH workout
+bench press:      :   90kg |  3 sets |  8 reps
+shoulder press:   :   50kg |  3 sets | 12 reps
+  Remark: lightweight babyy
+____________________________________________________________________________________________________
+loglist w/push
+=== LOG HISTORY FOR: PUSH ===
+[31-03-2026, 21:51] PUSH workout
+bench press:      :   90kg |  3 sets |  8 reps
+shoulder press:   :   50kg |  3 sets | 12 reps
+  Remark: lightweight babyy
+____________________________________________________________________________________________________
+```
+
+#### Find:
+```
+find e/bench w/push
+bench press | Weight: 90kg | Sets: 3 | Reps: 8
+____________________________________________________________________________________________________
+find e/squat w/legs
+____________________________________________________________________________________________________
+Workout does not exist. Try again...
+____________________________________________________________________________________________________
+```
+#### Exit:
+```
+exit
+____________________________________________________________________________________________________
+Bye! Keep getting swole!
+____________________________________________________________________________________________________
+```

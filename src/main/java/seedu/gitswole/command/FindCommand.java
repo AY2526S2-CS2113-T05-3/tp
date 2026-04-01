@@ -27,6 +27,7 @@ public class FindCommand extends Command {
      * @param arguments The full command string entered by the user.
      */
     public FindCommand(String arguments) {
+        assert arguments != null : "FindCommand arguments should not be null";
         this.arguments = arguments;
     }
 
@@ -40,6 +41,8 @@ public class FindCommand extends Command {
      */
     @Override
     public void execute(WorkoutList workouts, Ui ui) throws GitSwoleException {
+        assert workouts != null : "WorkoutList should not be null";
+        assert ui != null : "Ui should not be null";
         LOGGER.log(Level.INFO, "Executing FindCommand with arguments: {0}", arguments);
         if (arguments.contains("e/")) {
             handleFindExercise(workouts, ui);
@@ -74,7 +77,8 @@ public class FindCommand extends Command {
         }
         if (!found) {
             LOGGER.log(Level.INFO, "No workout matches found for keyword: {0}", keyword);
-            ui.showMessage("Workout Not Found :(");
+            ui.showLine();
+            ui.showMessage(" Workout Not Found :(");
         }
         ui.showLine();
     }

@@ -29,6 +29,7 @@ public class AddCommand extends Command {
      * @param response The full command string entered by the user.
      */
     public AddCommand(String response) {
+        assert response != null : "AddCommand response should not be null";
         this.response = response;
     }
 
@@ -43,9 +44,8 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(WorkoutList workouts, Ui ui) throws GitSwoleException {
-        assert workouts != null : "WorkoutList must not be null";
-        assert ui != null : "Ui must not be null";
-
+        assert workouts != null : "WorkoutList should not be null";
+        assert ui != null : "Ui should not be null";
         if (response.contains(" e/")) {
             handleAddExercise(workouts, ui);
         } else {

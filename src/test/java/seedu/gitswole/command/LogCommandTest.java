@@ -29,11 +29,11 @@ class LogCommandTest {
 
     /**
      * A stub implementation of {@link HistoryStorage} that bypasses physical file operations.
-     * Used to fulfill CS2113 requirements for side-effect free testing.
+     * Used to fulfill CS2113 requirements for side effect free testing.
      */
     private static class HistoryStorageStub extends HistoryStorage {
         @Override
-        public boolean hasSessionToday(String workoutName) {
+        public boolean hasSessionToday(String workoutName) throws IOException {
             return false;
         }
         @Override
@@ -48,7 +48,7 @@ class LogCommandTest {
         ui = new Ui();
         historyStub = new HistoryStorageStub();
 
-        // Setup a basic workout for testing
+        // Set up a basic workout for testing
         Workout push = new Workout("push");
         push.addExercise(new Exercise("benchpress", 0, 0, 0));
         workouts.addWorkout(push);
@@ -92,7 +92,7 @@ class LogCommandTest {
         new LogCommand("log e/benchpress w/push wt/50 s/1 r/1", historyStub).execute(workouts, ui);
         assertEquals(50, bench.getWeight());
 
-        // Log second entry (the overwrite)
+        // Log second entry (the.overwrite)
         new LogCommand("log e/benchpress w/push wt/70 s/3 r/8", historyStub).execute(workouts, ui);
         assertEquals(70, bench.getWeight());
     }
@@ -125,5 +125,71 @@ class LogCommandTest {
             unknownExercise.execute(workouts, ui));
         assertEquals(GitSwoleException.ErrorType.NOT_FOUND, ex2.getType());
     }
+
+    @Test
+    @DisplayName("log w/WORKOUT — resumes session when hasSessionToday is true")
+    void execute_resumeSession_showsResumingMessage() throws GitSwoleException {
+        HistoryStorage resumeStub = new HistoryStorageStub() {
+            @Override
+            public boolean hasSessionToday(String workoutName) {
+                return true; // 模拟今天已有 session
+            }
+        };
+
+        LogCommand cmd = new LogCommand("log w/push", resumeStub);
+        cmd.execute(workouts, ui);
+
+        assertEquals("push", workouts.getActiveWorkoutName());
+    }
+
+    @Test
+    @DisplayName("log w/ — empty workout name throws INCOMPLETE_COMMAND")
+    void execute_emptyWorkoutName_throwsIncompleteCommand() {
+        LogCommand cmd = new LogCommand("log w/", historyStub);
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+            () -> cmd.execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+    }
+
+    @Test
+    @DisplayName("log e/EXERCISE — remark is displayed when provided")
+    void execute_withRemark_showsRemark() throws GitSwoleException {
+        workouts.setActiveWorkoutName("push");
+
+        LogCommand cmd = new LogCommand("log e/benchpress wt/60 s/3 r/8 remark/felt strong", historyStub);
+        cmd.execute(workouts, ui);
+
+        Exercise bench = workouts.getWorkoutByName("push").getExerciseByName("benchpress");
+        assertEquals(60, bench.getWeight());
+    }
+
+    @Test
+    @DisplayName("log e/EXERCISE — omitted fields keep previous values")
+    void execute_partialUpdate_keepsDefaults() throws GitSwoleException {
+        workouts.setActiveWorkoutName("push");
+
+        new LogCommand("log e/benchpress w/push wt/50 s/4 r/10", historyStub).execute(workouts, ui);
+        new LogCommand("log e/benchpress w/push wt/80", historyStub).execute(workouts, ui);
+        Exercise bench = workouts.getWorkoutByName("push").getExerciseByName("benchpress");
+        assertEquals(80, bench.getWeight());
+        assertEquals(4, bench.getSets());
+        assertEquals(10, bench.getReps());
+    }
+
+    @Test
+    @DisplayName("log w/WORKOUT — IOException in storage is caught gracefully")
+    void execute_storageIOException_handledGracefully() throws GitSwoleException {
+        HistoryStorage ioStub = new HistoryStorageStub() {
+            @Override
+            public boolean hasSessionToday(String workoutName) throws IOException {
+                throw new IOException("disk error");
+            }
+        };
+
+        LogCommand cmd = new LogCommand("log w/push", ioStub);
+        cmd.execute(workouts, ui);
+        assertEquals("push", workouts.getActiveWorkoutName());
+    }
+
 }
 //@@author

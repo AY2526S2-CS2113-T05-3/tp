@@ -36,10 +36,31 @@ GitSwole provides fast, CLI-based workout tracking for gym-goers who dislike slo
 
 ## Quick Start
 
-*(TBC)*
+1. Ensure Java 11 or above is installed on your machine.
+2. Download the latest `gitswole.jar` from the [releases page](https://github.com/AY2526S2-CS2113-W10-3/tp/releases).
+3. Open a terminal and navigate to the folder containing the jar file.
+4. Run the application with:
+```
+   java -jar gitswole.jar
+```
+5. Type `help` to see all available commands.
+6. Refer to the [Features](#features) section below for the full command list.
 
 ---
 
+## Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Workout Session** | A named training session that groups related exercises together (e.g. "Push Day", "Legs"). A workout session acts as a folder — you create it first, then add exercises into it. |
+| **Exercise** | A specific movement within a workout session (e.g. "Bench Press", "Deadlift"). Each exercise stores its own weight, sets, and reps. An exercise always belongs to exactly one workout session. |
+| **Log / Log Entry** | A timestamped record of your actual performance for an exercise during a particular session. Logs are saved to your history and can be reviewed later with `loglist`. |
+| **Remark** | A free-text note attached to a log entry (e.g. "Felt strong today", "Lower back tight"). |
+| **Template** | Your saved workout sessions and their exercises serve as reusable templates — the baseline plan you log against each time you train. |
+
+> **In short:** GitSwole uses a two-level hierarchy — **Workout Sessions** contain **Exercises**. When you train, you **log** your performance against that template, building a chronological history you can review anytime.
+ 
+---
 ## Features
 
 ### Feature 1: Help
@@ -238,43 +259,83 @@ exit
 
 ### Feature 12: Mark / Unmark Workout
 
-**Purpose:** Marks a workout session as completed or resets it to incomplete. This helps you track which routines you have finished during your current training cycle.
+**Purpose:** Marks or unmarks a workout session as completed.
 
 **Format:**
 ```
-mark w/WORKOUT_NAME
-unmark w/WORKOUT_NAME
+mark w/WORKOUT
+unmark w/WORKOUT
 ```
 
 **Example:**
 ```
-Input: mark w/push day
-Output: [X] push day
+Input:  mark w/push
+Output: Successfully marked 'push' as done!
 
-Input: unmark w/push day
-Output: [ ] push day
+Input:  unmark w/push
+Output: Successfully unmarked 'push'!
 ```
 
----
+> **Note:** Completion status is shown in `list` as `[X]` (done) or `[ ]` (not done).
 
+---
 ### Feature 13: Storage
 
-**Purpose:** Keeps a record of past workout sessions (to use as templates).
+**Purpose:** Automatically persists your workout templates and training history to disk so that your data is preserved between sessions.
 
+**How it works:**
+
+GitSwole maintains two data files, both created automatically on first run:
+
+| File | Contents |
+|------|----------|
+| `data/workouts.txt` | Workout templates (sessions, exercises, weights, sets, reps, completion status) |
+| `data/history.txt` | Chronological training log entries created by the `log` command |
+
+Saving is fully automatic — every mutating command (`add`, `delete`, `edit`, `mark`, `log`) writes changes to disk immediately. There is no manual "save" command. On the next launch, GitSwole reloads your data from these files.
+
+> **Note:** The `|` character is used internally as a field delimiter. If your workout or exercise names contain ` | `, it will be escaped automatically, but it is best to avoid this character in names to prevent confusion when reading the raw file.
+
+> **Note:** You may edit `data/workouts.txt` or `data/history.txt` by hand, but malformed entries may cause loading errors. Always keep a backup before manual edits.
+ 
 ---
 
 ### Feature 14: Date
 
-**Purpose:** Assigns a date to each workout.
+**Purpose:** Automatically timestamps every training session so you can track when each workout was performed.
 
-*(Details TBC)*
+**How it works:**
 
+When you start a logging session with `log w/WORKOUT_NAME`, GitSwole captures the current date and time automatically — you do not need to enter a date manually. The timestamp is recorded in `dd-MM-yyyy, HH:mm` format and stored in your history file.
+
+**Example:**
+```
+Input:  log w/legs
+Output: Session started for Legs! Let's get those gains.
+```
+
+The history file will contain an entry like:
+```
+[01-04-2026, 18:30] LEGS workout
+```
+
+To review sessions by date, use the `loglist d/DATE` command (see [Feature 20: Log List](#feature-20-log-list)):
+```
+Input:  loglist d/01-04-2026
+Output:
+=== LOG HISTORY FOR: 01-04-2026 ===
+[01-04-2026, 18:30] LEGS workout
+deadlift:         :  100kg |  4 sets | 10 reps
+...
+```
+
+> **Note:** GitSwole uses your system clock. Make sure your computer's date and time are set correctly.
 ---
 
 ### Feature 15: Edit
 
 **Purpose:** Edits the name of an existing workout session, or updates any combination of fields
-within a specific exercise — without needing to delete and re-add.
+within a specific exercise - without needing to delete and re-add.
 
 **Format:**
 ```
@@ -320,9 +381,19 @@ Output: Change Recorded! Edited Workout:
 
 **Purpose:** Adds comments and remarks to a workout session.
 
-*(Details TBC)*
+**Format:**
+```
+log e/EXERCISE_NAME [w/WORKOUT_NAME] remark/REMARK
+```
 
----
+**Example:**
+```
+Input:  log e/Bench Press w/Push Day remark/Lightweight babyyy
+Output: Stats updated for Bench Press in Push Day!
+        Remark added: Lightweight babyyy
+```
+
+> **Note:** Remarks are saved to `history.txt` and displayed when you run `loglist`.
 
 ### Feature 17: Log Workout Session
 
@@ -357,9 +428,9 @@ log e/EXERCISE_NAME [w/WORKOUT_NAME] [wt/WEIGHT] [s/SETS] [r/REPS] [remark/REMAR
 
 **Example:**
 ```
-Input:  log e/Bench Press wt/85 s/3 r/5 remark/Felt strong
+Input:  log e/Bench Press wt/85 s/3 r/5 remark/Too ez, try up weight
 Output: Stats updated for Bench Press in Push Day!
-        Remark added: Felt strong
+        Remark added: Too ez, try up weight
 ```
 
 ---
@@ -383,41 +454,70 @@ loglist
 loglist w/WORKOUT_NAME
 loglist d/DATE
 ```
+* `loglist` alone prints every logged entry across all dates, in chronological order.
+* `loglist w/WORKOUT_NAME` filters the history to only entries belonging to that workout.
+* `loglist d/DATE` filters the history to all entries logged on a specific date. Date must follow the `dd-MM-yyyy` format.
 
-* If `w/` is provided, history is filtered to only show sessions for that specific workout.
-* If `d/` is provided, history is filtered by the specified date (Format: `dd-MM-yyyy`).
-* If no flags are provided, the complete history of all sessions is displayed.
-
-**Example:**
+**Example** - View complete history:
 ```
-Input: loglist d/24-03-2026
-Output: === LOG HISTORY FOR: 24-03-2026 ===
-        [24-03-2026, 09:00] PUSH DAY workout
-        Bench Press : 80kg | 3 sets | 10 reps
-        
-Input: loglist w/push day
-Output: === LOG HISTORY FOR: PUSH DAY ===
-        [24-03-2026, 09:00] PUSH DAY workout
-        Bench Press : 80kg | 3 sets | 10 reps
-        [21-03-2026, 10:15] PUSH DAY workout
+Input:  loglist
+Output:
+=== COMPLETE LOG HISTORY ===
+[24-03-2026, 23:09] LEGS workout
+deadlift:         :  100kg |  4 sets | 10 reps
+leg press:        :  140kg |  3 sets | 10 reps
+hamstring curl:   :  110kg |  4 sets |  8 reps
+  --------------------------------------------
+[30-03-2026, 14:15] LEGS workout
+deadlift:         :  100kg |  4 sets | 10 reps
+leg press:        :  140kg |  3 sets | 10 reps
+leg extension:    :   60kg |  3 sets | 15 reps
+```
+
+**Example** - Filter by workout:  
+```
+Input:  loglist w/legs
+Output:
+=== LOG HISTORY FOR: LEGS ===
+[24-03-2026, 23:09] LEGS workout
+deadlift:         :  100kg |  4 sets | 10 reps
+...
+```
+
+**Example** - Filter by date:
+```
+Input:  loglist d/30-03-2026
+Output:
+=== LOG HISTORY FOR: 30-03-2026 ===
+[30-03-2026, 14:15] LEGS workout
+deadlift:         :  100kg |  4 sets | 10 reps
+...
 ```
 
 ---
 
 ## FAQ
 
-*(TBC)*
+**Q: Where is my data stored?**  
+A: Workout templates are saved in `data/workouts.txt`. Workout history logs are saved in `data/history.txt`. Both files are created automatically on first run.
 
+**Q: What happens if I accidentally close the app mid-session?**  
+A: Data is saved automatically after every mutating command (`add`, `delete`, `mark`, `edit`), so you will not lose any confirmed entries.
+
+**Q: Can I edit `workouts.txt` or `history.txt` manually?**  
+A: Yes, but exercise caution — malformed entries may cause loading errors on the next launch.
+
+**Q: What happens if I type an unrecognised command?**  
+A: GitSwole will display an error message. Type `help` to see the list of valid commands.
 ---
 
 ## Known Issues
 
-*(TBC)*
+**_To be added..._**
 
 ---
 
 ## Command Summary
-
 | Action | Format | Example |
 |--------|--------|---------|
 | Add workout | `add w/WORKOUT` | `add w/push` |
@@ -427,11 +527,21 @@ Output: === LOG HISTORY FOR: PUSH DAY ===
 | List summary | `list` | `list` |
 | List specific workout | `list w/WORKOUT` | `list w/push` |
 | List all | `list all` | `list all` |
+| Mark workout | `mark w/WORKOUT` | `mark w/push` |
+| Unmark workout | `unmark w/WORKOUT` | `unmark w/push` |
 | Log workout session | `log w/WORKOUT` | `log w/push day` |
 | Log exercise stats | `log e/EXERCISE [w/WORKOUT] [wt/WEIGHT] [s/SETS] [r/REPS] [remark/REMARK]` | `log e/bench press wt/80 s/3 r/10` |
+| Add remark | `log e/EXERCISE [w/WORKOUT] remark/REMARK` | `log e/bench press w/push remark/Felt strong` |
+| View full log history | `loglist` | `loglist` |
+| View log by workout | `loglist w/WORKOUT` | `loglist w/legs` |
+| View log by date | `loglist d/DATE` | `loglist d/30-03-2026` |
 | Find workout | `find w/WORKOUT` | `find w/push` |
 | Find exercise | `find e/EXERCISE w/WORKOUT` | `find e/benchpress w/push` |
 | Edit workout name | `edit w/WORKOUT` | `edit w/push` |
 | Edit exercise | `edit w/WORKOUT e/EXERCISE` | `edit w/Push Day e/Bench Press` |
 | Help | `help` | `help` |
 | Exit program | `exit` | `exit` |
+
+---
+
+**Get Swole! 💪🏽**
