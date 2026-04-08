@@ -59,7 +59,7 @@ class HistoryStorageTest {
     void writeSessionHeader_addsHeaderCorrectly() throws IOException {
         historyStorage.writeSessionHeader("pull");
         List<String> lines = Files.readAllLines(testFile);
-        
+
         assertEquals(1, lines.size());
         String today = LocalDateTime.now().format(DATE_FORMATTER);
         assertTrue(lines.get(0).contains("[" + today));
@@ -100,10 +100,10 @@ class HistoryStorageTest {
         historyStorage.writeSessionHeader("push");
         historyStorage.updateExerciseLog("push", new Exercise("bench", 80, 3,
                 10), null);
-        
+
         // Add a separator for the next session
         Files.write(testFile, List.of("---"), java.nio.file.StandardOpenOption.APPEND);
-        
+
         historyStorage.writeSessionHeader("pull");
         historyStorage.updateExerciseLog("pull", new Exercise("row", 60, 3,
                 10), null);
