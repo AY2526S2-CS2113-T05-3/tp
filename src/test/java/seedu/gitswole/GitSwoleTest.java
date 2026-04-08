@@ -5,10 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import seedu.gitswole.assets.WorkoutList;
-import seedu.gitswole.storage.Storage;
-import seedu.gitswole.ui.Ui;
-
 import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
