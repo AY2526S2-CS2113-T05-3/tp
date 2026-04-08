@@ -199,7 +199,6 @@ and `Storage`. These components interact with a central `Assets` data model to p
 designed to be extensible, allowing new commands and storage formats to be added with minimal friction by extending the 
 base `Command` class and utilizing dedicated storage handlers.
 
-### Ethan's enhancement
 #### 1. Delete Feature
 
 The delete mechanism is facilitated by the `DeleteCommand.java` class. It extends from the abstract class `Command` and overrides the `execute()` method, which throws the exception `GitSwoleException`, to execute the deletion of workouts/exercises.
@@ -273,7 +272,7 @@ Each workout block consists of:
 
 ---
 
-### Praveen's enhancement
+
 
 This enhancement introduces a robust workout logging and history tracking system, along with a multi-tiered listing 
 mechanism. It is composed of the `ListCommand`, `LogCommand`, `LogListCommand`, `HistoryStorage` classes, and the 
@@ -347,7 +346,7 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 <img src="diagrams/architecture/Storage/historystorageSD.png" width="600" />
 
 ---
-### ShuoJie's enhancement: History Retrieval (`loglist`)
+History Retrieval (`loglist`)
 
 The `LogList` enhancement provides users with a dedicated way to view their past workout sessions chronologically. While the standard `list` command displays workout templates (routines), `loglist` retrieves actual performed data from the persistent history file.
 
@@ -391,8 +390,6 @@ The diagram below shows how the components interact when a user requests to see 
 <img src="diagrams/commands/loglist/loglistSD.png" width="700" />
 
 ---
-
-### Vetri's Enhancement
 
 This enhancement introduces the help and exit commands, along with an in-place workout and exercise editing system.
 It is composed of the `HelpCommand`, `ExitCommand`, and `EditCommand` classes.
@@ -524,8 +521,6 @@ no changes were recorded.
 <img src="diagrams/commands/edit/EditCommand.png" width="1047"/>
 
 ---
-
-### Wan's Enhancement
 
 This enhancement introduces the search capability, which allows users to quickly locate workouts and exercises
 within the application. It is composed of the `FindCommand` class.
