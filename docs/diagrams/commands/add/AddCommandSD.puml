@@ -1,0 +1,47 @@
+@startuml
+title Sequence Diagram: AddCommand
+
+participant "Caller" as Caller
+participant ":AddCommand" as Command
+participant ":WorkoutList" as WorkoutList
+participant ":Workout" as Workout
+participant ":Ui" as Ui
+
+Caller -> Command : execute(workouts, ui)
+activate Command
+
+alt response.contains("e/")
+    Command -> Command : parse exerciseName, workoutName
+
+    Command -> WorkoutList : getWorkoutByName(workoutName)
+    activate WorkoutList
+    WorkoutList --> Command : workout
+    deactivate WorkoutList
+
+    Command -> Command : parse weight, sets, reps
+    Command -> Command : isNegative(weight, sets, reps)
+
+    Command -> Workout : addExercise(exerciseName, weight, sets, reps)
+    activate Workout
+    Workout --> Command
+    deactivate Workout
+
+    Command -> Ui : showMessage("Your exercise has been successfully added!")
+
+else
+    Command -> Command : parse workoutName
+
+    Command -> WorkoutList : addWorkout(workoutName)
+    activate WorkoutList
+    WorkoutList --> Command
+    deactivate WorkoutList
+
+    Command -> Ui : showMessage("Successfully added a ... session!")
+    activate Ui
+    Ui --> Command
+    deactivate Ui
+end
+
+Command --> Caller
+deactivate Command
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+participant ":MarkCommand" as MC
+participant ":Parser" as P
+participant ":WorkoutList" as WL
+participant ":Ui" as UI
+
+[-> MC: execute(workouts, ui)
+activate MC
+
+MC -> P: parseValue(response, "w/")
+activate P
+P --> MC: workoutName
+deactivate P
+
+MC -> WL: getWorkoutByName(workoutName)
+activate WL
+WL --> MC: target
+deactivate WL
+
+MC -> WL: target.markDone(isDone)
+activate WL
+WL --> MC
+deactivate WL
+
+alt isDone
+    MC -> UI: showMessage("[X] workoutName")
+    activate UI
+    UI --> MC
+    deactivate UI
+else
+    MC -> UI: showMessage("[ ] workoutName")
+    activate UI
+    UI --> MC
+    deactivate UI
+end
+
+
+deactivate MC
+@enduml

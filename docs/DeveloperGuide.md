@@ -8,11 +8,13 @@
     - [Command Component](#command-component)
     - [Storage Component](#storage-component)
 4. [Implementation](#implementation)
+    - [Add Workout and Exercise Feature (`AddCommand`)](#add-workout-and-exercise-feature-addcommand)
     - [Storage Feature](#storage-feature)
-    - [Delete Feature (`DeleteCommand`)](#delete-feature)
+    - [Delete Feature (`DeleteCommand`)](#delete-feature-deletecommand)
     - [Edit Workout and Exercise Feature (`EditCommand`)](#edit-workout-and-exercise-feature-editcommand)
     - [Keyword-Based Find Feature (`FindCommand`)](#keyword-based-find-feature-findcommand)
     - [Tiered Listing Feature (`ListCommand`)](#tiered-listing-feature-listcommand)
+    - [Mark and Unmark Workout Feature (`MarkCommand`)](#mark-and-unmark-workout-feature-markcommand)
     - [Smart Workout Logging (`LogCommand`)](#smart-workout-logging-logcommand)
     - [Persistent History Storage (`HistoryStorage`)](#persistent-history-storage-historystorage--historytxt)
     - [History Retrieval (`LogList`)](#history-retrieval-loglist)
@@ -173,17 +175,16 @@ Each concrete subclass encapsulates the full logic for exactly one user-facing o
 
 | Keyword | Command Subclass | Responsibility |
 |---|---|---|
-| `add` | `AddCommand` | Adds a new `Workout` or `Exercise` to the `WorkoutList` |
-| `delete` | [`DeleteCommand`](#delete-feature) | Removes a `Workout` or `Exercise` by index |
+| `add` | [`AddCommand`](#add-workout-and-exercise-feature-addcommand) | Adds a new `Workout` or `Exercise` to the `WorkoutList` |
+| `delete` | [`DeleteCommand`](#delete-feature-deletecommand) | Removes a `Workout` or `Exercise` by index |
 | `edit` | [`EditCommand`](#edit-workout-and-exercise-feature-editcommand) | Modifies the name or fields of an existing `Workout` or `Exercise` |
 | `find` | [`FindCommand`](#keyword-based-find-feature-findcommand) | Searches for workouts by keyword |
 | `list` | [`ListCommand`](#tiered-listing-feature-listcommand) | Lists workouts at summary, workout-specific, or full-detail scope |
-| `mark` / `unmark` | `MarkCommand` | Marks or unmarks a `Workout` as done |
+| `mark` / `unmark` | [`MarkCommand`](#mark-and-unmark-workout-feature-markcommand) | Marks or unmarks a `Workout` as done |
 | `log` | [`LogCommand`](#smart-workout-logging-logcommand) | Initialises a logging session or logs an individual exercise stat |
 | `loglist` | [`LogListCommand`](#history-retrieval-loglist) | Displays the full workout history from `HistoryStorage` |
 | `help` | [`HelpCommand`](#help-command-helpcommand) | Displays all available commands and their formats |
 | `exit` | [`ExitCommand`](#exit-command-exitcommand) | Sets `isExit = true` to signal the main loop to terminate |
-
 The `isExit()` method is defined in the base class and returns `false` for all commands
 except `ExitCommand`, which overrides it to return `true`.
 
@@ -213,6 +214,45 @@ The four primary components - `Ui`, `Parser`, `Command`, and `Storage` - describ
 is owned by a dedicated `Command` subclass that is instantiated by `Parser`, executed by
 `GitSwole`, and backed by `Storage` where persistence is required. The sections below 
 document the implementation details, design considerations, and sequence diagrams for each feature.
+
+---
+
+### Add Workout and Exercise Feature (`AddCommand`)
+
+The add feature is the entry point for building a user's workout library. 
+It is facilitated by `AddCommand`, which interacts with `WorkoutList` (to store data) and `Ui` 
+(to confirm the result to the user).
+
+**How it works:** It supports two operations depending on the flags provided:
+
+- `add w/WORKOUT` - creates a new named workout session in the `WorkoutList`
+- `add e/EXERCISE w/WORKOUT wt/WEIGHT s/SETS r/REPS` - appends a new exercise with its stats to an existing workout
+
+> **Note:** User must call command to add Workout first, before adding a new Exercise.
+
+**Examples:**
+```
+add w/Push Day
+add e/Bench Press w/Push Day wt/80 s/3 r/10
+```
+
+#### Architecture and Component Level Design
+
+When a user adds a new workout or exercise, the following process occurs:
+
+1. **Parser:** Reads the raw input, extracts the command word `add`, and returns a new `AddCommand(response)` with the full raw string passed as the argument.
+
+2. **AddCommand:** The main loop calls `AddCommand#execute()`, which checks for the presence of the `e/` flag to determine whether the user is adding a workout or an exercise.
+
+3. **WorkoutList:** The command delegates to either `WorkoutList#addWorkout()` or `WorkoutList#addExercise()`. Adding a workout creates a new `Workout` object; adding an exercise calls `WorkoutList#getWorkoutByName()` to locate the target, then appends a new `Exercise` object to it. A `GitSwoleException` is thrown if the target workout does not exist.
+
+4. **Storage:** `GitSwole` calls `Storage#saveWorkouts()` after the command executes successfully to persist the new data immediately.
+
+5. **Ui:** The result is reported back via `Ui#showMessage()`.
+
+#### Sequence Diagram
+
+<img src="diagrams/commands/add/AddCommandSD.png" width="481"/>
 
 ---
 
@@ -442,6 +482,41 @@ fragmented commands.
 The following sequence diagram illustrates how the `ListCommand` determines the scope of the listing and interacts with the `WorkoutList` and `Ui` components:
 
 <img src="diagrams/commands/list/listSD.png" width="646" />
+
+---
+
+### Mark and Unmark Workout Feature (`MarkCommand`)
+
+The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left — without needing to remember manually.
+
+**How it works:** It supports two operations:
+
+- `mark w/WORKOUT` — marks the named workout as done
+- `unmark w/WORKOUT` — marks the named workout as not done
+
+**Examples:**
+```
+mark w/Push Day
+unmark w/Push Day
+```
+
+
+The completion status is reflected immediately when running `list`, which displays a done/not done indicator alongside each workout name, giving users a clear overview of what remains for the week.
+
+#### Architecture and Component Level Design
+
+1. **Parser:** Reads the raw input, extracts the command word `mark` or `unmark`, and returns a new `MarkCommand(response)` with the full raw string as the argument.
+2. **MarkCommand:** The main loop calls `MarkCommand#execute()`, which parses the `w/` flag to identify the target workout and sets its completion status to `true` (mark) or `false` (unmark).
+3. **WorkoutList:** The command calls `WorkoutList#getWorkoutByName()` to locate the target. A `GitSwoleException` is thrown if the workout does not exist.
+4. **Storage:** `GitSwole` calls `Storage#saveWorkouts()` after execution to persist the updated completion status.
+5. **Ui:** The result is confirmed to the user via `Ui#showMessage()`.
+
+#### Sequence Diagrams
+
+The following sequence diagram illustrates how the `MarkCommand` works:
+
+<img src="diagrams/commands/mark/MarkCommandSD.png" width="522" />
+
 
 ---
 
