@@ -67,6 +67,8 @@ public class DeleteCommand extends Command {
         if (workoutName.isEmpty()) {
             LOGGER.log(Level.WARNING, "DeleteWorkout failed: Workout name is empty.");
             ui.showMessage("Please specify the workout name. Usage: delete w/WORKOUT");
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
             return;
         }
 
@@ -75,10 +77,13 @@ public class DeleteCommand extends Command {
         if (isDeleted) {
             String formattedName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
             ui.showMessage("Successfully deleted the " + formattedName + " session!");
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
         } else {
             // Print out the warning gracefully instead of throwing an exception to satisfy the test
             ui.showMessage("'" + workoutName + "' not found. Please check your spelling.");
-            return;
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
         }
     }
 
@@ -113,6 +118,8 @@ public class DeleteCommand extends Command {
             LOGGER.log(Level.WARNING, "DeleteExercise failed: Empty exercise ({0}) or workout ({1}) name.",
                 new Object[]{exerciseName, workoutName});
             ui.showMessage("Exercise or Workout name cannot be empty. Usage: delete e/EXERCISE w/WORKOUT");
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
             return;
         }
 
@@ -120,9 +127,13 @@ public class DeleteCommand extends Command {
 
         if (isDeleted) {
             ui.showMessage("Successfully deleted '" + exerciseName + "' from '" + workoutName + "'!");
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
         } else {
             ui.showMessage("'" + exerciseName + "' or workout '" + workoutName
                 + "' not found. Please check your spelling.");
+            ui.showMessage("________________________________________________________________________________" +
+                    "____________________");
         }
     }
 }
