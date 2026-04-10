@@ -55,10 +55,10 @@ git clone https://github.com/AY2526S2-CS2113-W10-3/tp
 cd tp
 ```
 
-### Setting Up the IDE (IntelliJ IDEA — Recommended)
+### Setting Up the IDE
 1. Open IntelliJ IDEA and choose **Open**, then select the root `tp/` folder.
 2. If prompted, select **Import Gradle Project** and let IntelliJ resolve dependencies.
-3. Ensure **IntelliJ JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) — this step is not needed if you have used JDK 17 in a previous IntelliJ project:
+3. Ensure **IntelliJ JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) - this step is not needed if you have used JDK 17 in a previous IntelliJ project:
    `File → Project Structure → Project → SDK`
 4. Enable annotation processing:
    `Settings → Build, Execution, Deployment → Compiler → Annotation Processors → Enable`
@@ -500,12 +500,12 @@ The following sequence diagram illustrates how the `ListCommand` determines the 
 
 ### Mark and Unmark Workout Feature (`MarkCommand`)
 
-The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left — without needing to remember manually.
+The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left, without needing to remember manually.
 
 **How it works:** It supports two operations:
 
-- `mark w/WORKOUT` — marks the named workout as done
-- `unmark w/WORKOUT` — marks the named workout as not done
+- `mark w/WORKOUT` - marks the named workout as done
+- `unmark w/WORKOUT` - marks the named workout as not done
 
 **Examples:**
 ```
@@ -715,20 +715,20 @@ to accomplish tasks faster than using a mouse in a GUI.
 
 ## Glossary
 
-| Term | Meaning |
-|------|---------|
-| **Workout Session** | A named training session that groups related exercises together (e.g. "Push Day", "Legs"). A workout session acts as a folder — you create it first, then add exercises into it. |
+| Term | Meaning                                                                                                                                                                                        |
+|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Workout Session** | A named training session that groups related exercises together (e.g. "Push Day", "Legs"). A workout session acts as a folder - you create it first, then add exercises into it.               |
 | **Exercise** | A specific movement within a workout session (e.g. "Bench Press", "Deadlift"). Each exercise stores its own weight, sets, and reps. An exercise always belongs to exactly one workout session. |
-| **Log / Log Entry** | A timestamped record of your actual performance for an exercise during a particular session. Logs are saved to your history and can be reviewed later with `loglist`. |
-| **Remark** | A free-text note attached to a log entry (e.g. "Felt strong today", "Lower back tight"). |
-| **Template** | Your saved workout sessions and their exercises serve as reusable templates — the baseline plan you log against each time you train. |
-| **CLI** | Command Line Interface. A text-based user interface used to interact with the software. |
-| **Index** | The 1-based numerical position of a task as currently displayed in the list. |
-| **Flag** | A prefix marker in a command string (e.g. `w/`, `e/`, `wt/`, `s/`, `r/`) used by the Parser to extract specific values from the user's input. |
-| **Sticky Session** | A UX shortcut where the application remembers the last workout name used in a `log` command, so subsequent exercise logs do not require re-typing the `w/` flag. |
-| **Smart Overwriting** | The mechanism used by `HistoryStorage` to update an existing log entry in-place (rather than appending a duplicate) when the same exercise is re-logged on the same date. |
+| **Log / Log Entry** | A timestamped record of your actual performance for an exercise during a particular session. Logs are saved to your history and can be reviewed later with `loglist`.                          |
+| **Remark** | A free-text note attached to a log entry (e.g. "Felt strong today", "Lower back tight").                                                                                                       |
+| **Template** | Your saved workout sessions and their exercises serve as reusable templates, the baseline plan you log against each time you train.                                                            |
+| **CLI** | Command Line Interface. A text-based user interface used to interact with the software.                                                                                                        |
+| **Index** | The 1-based numerical position of a task as currently displayed in the list.                                                                                                                   |
+| **Flag** | A prefix marker in a command string (e.g. `w/`, `e/`, `wt/`, `s/`, `r/`) used by the Parser to extract specific values from the user's input.                                                  |
+| **Sticky Session** | A UX shortcut where the application remembers the last workout name used in a `log` command, so subsequent exercise logs do not require re-typing the `w/` flag.                               |
+| **Smart Overwriting** | The mechanism used by `HistoryStorage` to update an existing log entry in-place (rather than appending a duplicate) when the same exercise is re-logged on the same date.                      |
 
-> **In short:** GitSwole uses a two-level hierarchy — **Workout Sessions** contain **Exercises**. When you train, you **log** your performance against that template, building a chronological history you can review anytime.
+> **In short:** GitSwole uses a two-level hierarchy - **Workout Sessions** contain **Exercises**. When you train, you **log** your performance against that template, building a chronological history you can review anytime.
 
 ---
 
