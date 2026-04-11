@@ -36,7 +36,10 @@ GitSwole provides fast, CLI-based workout tracking for gym-goers who dislike slo
 
 ## Quick Start
 
-1. Ensure Java 11 or above is installed on your machine.
+1. Ensure Java 17 or above is installed on your machine. Verify with:
+```
+  java -version
+```
 2. Download the latest `gitswole.jar` from the [releases page](https://github.com/AY2526S2-CS2113-W10-3/tp/releases).
 3. Open a terminal and navigate to the folder containing the jar file.
 4. Run the application with:
