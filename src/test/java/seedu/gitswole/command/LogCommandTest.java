@@ -14,6 +14,7 @@ import seedu.gitswole.ui.Ui;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -108,8 +109,10 @@ class LogCommandTest {
         
         GitSwoleException ex = assertThrows(GitSwoleException.class, () -> 
             logCmd.execute(workouts, ui));
-        assertEquals(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, ex.getType());
+        assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
         assertTrue(ex.getMessage().contains("No active workout session found"));
+        // Verify it doesn't contain the redundant suffix
+        assertFalse(ex.getMessage().contains("Please complete your command"));
     }
 
     @Test
@@ -237,13 +240,12 @@ class LogCommandTest {
     @DisplayName("log e/EXERCISE — extremely large numbers handled by parser")
     void execute_largeNumbers_handledByParser() throws GitSwoleException {
         workouts.setActiveWorkoutName("push");
-        // Parser.parseOptionalInt returns default if parsing fails (e.g. overflow)
+        // Parser.parseAndValidateInt now throws an exception for values above limit
         LogCommand cmd = new LogCommand("log e/benchpress wt/999999999999999999", historyStub);
-        cmd.execute(workouts, ui);
         
-        Exercise bench = workouts.getWorkoutByName("push").getExerciseByName("benchpress");
-        // Should keep old value (0) because 999... is not a valid Int
-        assertEquals(0, bench.getWeight());
+        GitSwoleException ex = assertThrows(GitSwoleException.class, () -> 
+            cmd.execute(workouts, ui));
+        assertTrue(ex.getMessage().contains("David Goggins"));
     }
 
 }

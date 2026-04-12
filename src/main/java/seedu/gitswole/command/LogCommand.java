@@ -138,7 +138,7 @@ public class LogCommand extends Command {
 
         if (workoutName == null) {
             LOGGER.log(Level.WARNING, "LogExercise failed: Missing workout context.");
-            throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND, 
+            throw new GitSwoleException(GitSwoleException.ErrorType.DEFAULT, 
                 "No active workout session found. Please specify the workout using w/WORKOUT_NAME " +
                 "(e.g., log e/" + exerciseName + " w/push)");
         }
