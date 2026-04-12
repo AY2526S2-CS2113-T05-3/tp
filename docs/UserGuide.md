@@ -226,8 +226,8 @@ list w/WORKOUT
 ```
 Input:  list w/push
 Output:
-  PUSH Workout Exercises:
-  Bench Press | Weight: 80kg | Sets: 4 | Reps: 10
+[X] PUSH Workout Exercises:
+ 1. Bench Press (80kg | 4s | 10r)
   ... remaining exercises ...
 ```
 
