@@ -134,6 +134,16 @@ public class AddCommand extends Command {
             throw new GitSwoleException(GitSwoleException.ErrorType.IDX_OUTOFBOUNDS, workoutName);
         }
 
+        if (targetWorkout.containsExercise(exerciseName)) {
+            LOGGER.log(Level.WARNING, "AddExercise failed: Duplicate exercise '{0}' in '{1}'.",
+                new Object[]{exerciseName, workoutName});
+            throw new GitSwoleException(
+                GitSwoleException.ErrorType.DEFAULT,
+                "An exercise named '" + exerciseName + "' already exists in '" + workoutName + "'! " +
+                        "If you are doing different variations, try adding a number (e.g., " + exerciseName + " 2)."
+            );
+        }
+
 
         String weightStr = Parser.parseValue(response, "wt/");
         String setsStr = Parser.parseValue(response, "s/");
