@@ -195,7 +195,8 @@ public class AddCommand extends Command {
         } catch (NumberFormatException e) {
             throw new GitSwoleException(
                 GitSwoleException.ErrorType.DEFAULT,
-                "Invalid input for " + fieldName + ": '" + value + "'. Please enter a valid number (e.g., " + flag + "10)."
+                "Invalid input for " + fieldName + ": '" + value +
+                        "'. Please enter a valid number (e.g., " + flag + "10)."
             );
         }
     }

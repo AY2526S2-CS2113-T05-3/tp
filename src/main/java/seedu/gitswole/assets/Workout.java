@@ -39,7 +39,7 @@ public class Workout {
     /**
      * Checks if an exercise with the given name already exists in this workout.
      * Case-insensitive to prevent bypasses like "Bench" vs "bench".
-     * * @param exerciseName The name of the exercise to check.
+     * @param exerciseName The name of the exercise to check.
      * @return true if the exercise exists, false otherwise.
      */
     public boolean containsExercise(String exerciseName) {
