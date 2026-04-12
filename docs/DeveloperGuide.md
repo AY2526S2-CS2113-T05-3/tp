@@ -39,9 +39,9 @@
 ## Setup Guide
 
 ### Prerequisites
-* **JDK 17** (use the exact version) — verify with `java -version`
-* **IntelliJ IDEA** (update to the most recent version)
-* **Gradle** — the project ships with the Gradle wrapper (`gradlew`), so a
+* **JDK 17** - verify with `java -version`
+* **IntelliJ IDEA**
+* **Gradle** - the project ships with the Gradle wrapper (`gradlew`), so a
   separate Gradle installation is not required
 
 ### Getting the Source Code
@@ -55,10 +55,10 @@ git clone https://github.com/AY2526S2-CS2113-W10-3/tp
 cd tp
 ```
 
-### Setting Up the IDE (IntelliJ IDEA — Recommended)
+### Setting Up the IDE
 1. Open IntelliJ IDEA and choose **Open**, then select the root `tp/` folder.
 2. If prompted, select **Import Gradle Project** and let IntelliJ resolve dependencies.
-3. Ensure **IntelliJ JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) — this step is not needed if you have used JDK 17 in a previous IntelliJ project:
+3. Ensure **IntelliJ JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) - this step is not needed if you have used JDK 17 in a previous IntelliJ project:
    `File → Project Structure → Project → SDK`
 4. Enable annotation processing:
    `Settings → Build, Execution, Deployment → Compiler → Annotation Processors → Enable`
@@ -174,18 +174,19 @@ public abstract void execute(WorkoutList workouts, Ui ui) throws GitSwoleExcepti
 Each concrete subclass encapsulates the full logic for exactly one user-facing operation.
 `Parser` resolves user input keywords to these subclasses as follows:
 
-| Keyword | Command Subclass | Responsibility |
-|---|---|---|
-| `add` | [`AddCommand`](#add-workout-and-exercise-feature-addcommand) | Adds a new `Workout` or `Exercise` to the `WorkoutList` |
-| `delete` | [`DeleteCommand`](#delete-feature-deletecommand) | Removes a `Workout` or `Exercise` by index |
-| `edit` | [`EditCommand`](#edit-workout-and-exercise-feature-editcommand) | Modifies the name or fields of an existing `Workout` or `Exercise` |
-| `find` | [`FindCommand`](#keyword-based-find-feature-findcommand) | Searches for workouts by keyword |
-| `list` | [`ListCommand`](#tiered-listing-feature-listcommand) | Lists workouts at summary, workout-specific, or full-detail scope |
-| `mark` / `unmark` | [`MarkCommand`](#mark-and-unmark-workout-feature-markcommand) | Marks or unmarks a `Workout` as done |
-| `log` | [`LogCommand`](#smart-workout-logging-logcommand) | Initialises a logging session or logs an individual exercise stat |
-| `loglist` | [`LogListCommand`](#history-retrieval-loglist) | Displays the full workout history from `HistoryStorage` |
-| `help` | [`HelpCommand`](#help-command-helpcommand) | Displays all available commands and their formats |
-| `exit` | [`ExitCommand`](#exit-command-exitcommand) | Sets `isExit = true` to signal the main loop to terminate |
+| Keyword           | Command Subclass                                                             | Responsibility                                                           |
+|-------------------|------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `add`             | [`AddCommand`](#add-workout-and-exercise-feature-addcommand)                 | Adds a new `Workout` or `Exercise` to the `WorkoutList`                  |
+| `delete`          | [`DeleteCommand`](#delete-feature-deletecommand)                             | Removes a `Workout` or `Exercise` by index                               |
+| `edit`            | [`EditCommand`](#edit-workout-and-exercise-feature-editcommand)              | Modifies the name or fields of an existing `Workout` or `Exercise`       |
+| `find`            | [`FindCommand`](#keyword-based-find-feature-findcommand)                     | Searches for workouts by keyword                                         |
+| `list`            | [`ListCommand`](#tiered-listing-feature-listcommand)                         | Lists workouts at summary, workout-specific, or full-detail scope        |
+| `mark` / `unmark` | [`MarkCommand`](#mark-and-unmark-workout-feature-markcommand)                | Marks or unmarks a `Workout` as done                                     |
+| `log`             | [`LogCommand`](#smart-workout-logging-logcommand)                            | Initialises a logging session or logs an individual exercise stat        |
+| `loglist`         | [`LogListCommand`](#history-retrieval-loglist)                               | Displays the full workout history from `HistoryStorage`                  |
+| `help`            | [`HelpCommand`](#help-command-helpcommand)                                   | Displays all available commands and their formats                        |
+| `exit`            | [`ExitCommand`](#exit-command-exitcommand)                                   | Sets `isExit = true` to signal the main loop to terminate                |  
+
 The `isExit()` method is defined in the base class and returns `false` for all commands
 except `ExitCommand`, which overrides it to return `true`.
 
@@ -499,12 +500,12 @@ The following sequence diagram illustrates how the `ListCommand` determines the 
 
 ### Mark and Unmark Workout Feature (`MarkCommand`)
 
-The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left — without needing to remember manually.
+The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left, without needing to remember manually.
 
 **How it works:** It supports two operations:
 
-- `mark w/WORKOUT` — marks the named workout as done
-- `unmark w/WORKOUT` — marks the named workout as not done
+- `mark w/WORKOUT` - marks the named workout as done
+- `unmark w/WORKOUT` - marks the named workout as not done
 
 **Examples:**
 ```
@@ -727,7 +728,7 @@ to accomplish tasks faster than using a mouse in a GUI.
 | **Sticky Session** | A UX shortcut where the application remembers the last workout name used in a `log` command, so subsequent exercise logs do not require re-typing the `w/` flag. |
 | **Smart Overwriting** | The mechanism used by `HistoryStorage` to update an existing log entry in-place (rather than appending a duplicate) when the same exercise is re-logged on the same date. |
 
-> **In short:** GitSwole uses a two-level hierarchy — **Workout Sessions** contain **Exercises**. When you train, you **log** your performance against that template, building a chronological history you can review anytime.
+> **In short:** GitSwole uses a two-level hierarchy - **Workout Sessions** contain **Exercises**. When you train, you **log** your performance against that template, building a chronological history you can review anytime.
 
 ---
 
