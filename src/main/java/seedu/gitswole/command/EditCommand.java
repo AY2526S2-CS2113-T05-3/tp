@@ -88,7 +88,7 @@ public class EditCommand extends Command{
         ui.showMessage("Edit fields (e.g. wn/NewName): ");
         String editLine = ui.readLine();
 
-        applyWorkoutEdits(editLine, workoutToEdit);
+        applyWorkoutEdits(editLine, workoutToEdit, ui, workouts);
         printUpdatedWorkout(ui, workoutToEdit);
     }
 
@@ -139,7 +139,7 @@ public class EditCommand extends Command{
         ui.showMessage("Edit fields (e.g. wn/NewWorkout en/NewExercise wt/100 s/3 r/10): ");
         String editLine = ui.readLine();
 
-        applyExerciseEdits(editLine, workoutToEdit, exerciseToEdit);
+        applyExerciseEdits(editLine, workoutToEdit, exerciseToEdit, ui, workouts, workoutToEdit);
 
         printUpdatedWorkout(ui, workoutToEdit);
     }
@@ -164,7 +164,8 @@ public class EditCommand extends Command{
      * @param workoutToEdit  The {@link Workout} whose name may be updated via {@code wn/}.
      * @param exerciseToEdit The {@link Exercise} whose fields may be updated.
      */
-    private void applyExerciseEdits(String editLine, Workout workoutToEdit, Exercise exerciseToEdit)
+    private void applyExerciseEdits(String editLine, Workout workoutToEdit, Exercise exerciseToEdit, Ui ui,
+                                    WorkoutList workouts, Workout workout)
             throws GitSwoleException {
         if (editLine == null || editLine.isBlank()) {
             return;
@@ -186,35 +187,45 @@ public class EditCommand extends Command{
             exerciseToEdit.setExerciseName(en);
             hasChanged = true;
         }
-
-        try {
-            int v = Integer.parseInt(wt);
-            if (v > 0) {
-                exerciseToEdit.setWeight(v);
+        if (wt != null && !wt.isEmpty()) {
+            int wtInt = validInput(wt, ui);
+            if (wtInt >= 0) {
+                exerciseToEdit.setWeight(wtInt);
                 hasChanged = true;
             }
-        } catch (NumberFormatException ignored) {
-            LOGGER.log(Level.INFO, "Nothing was selected.");
+        }
+        if (s != null && !s.isEmpty()) {
+            int sInt = validInput(s, ui);
+            if (sInt >= 0) {
+                exerciseToEdit.setSets(sInt);
+                hasChanged = true;
+            }
         }
 
-        try {
-            int v = Integer.parseInt(s);
-            if (v > 0) {
-                exerciseToEdit.setSets(v);
+        if (r != null && !r.isEmpty()) {
+            int rInt = validInput(r, ui);
+            if (rInt >= 0) {
+                exerciseToEdit.setReps(rInt);
                 hasChanged = true;
             }
-        } catch (NumberFormatException ignored) {
-            LOGGER.log(Level.INFO, "Nothing was selected.");
         }
+    }
 
+    private int validInput(String wt, Ui ui) {
         try {
-            int v = Integer.parseInt(r);
-            if (v > 0) {
-                exerciseToEdit.setReps(v);
-                hasChanged = true;
+            long v = Long.parseLong(wt);
+            if (v < 0) {
+                ui.showMessage("Negative number received. Please try again!");
+                return -1;
+            } else if (v > 100000) {
+                ui.showMessage("Relax David Goggins. You aint lifting that much.");
+                return -1;
             }
+            return (int) v;
         } catch (NumberFormatException ignored) {
+            ui.showMessage("Invalid input: please enter a whole number between 0 and 100000.");
             LOGGER.log(Level.INFO, "Nothing was selected.");
+            return -1;
         }
     }
 
@@ -232,7 +243,8 @@ public class EditCommand extends Command{
      *                      If {@code null} or blank, no changes are applied.
      * @param workoutToEdit The {@link Workout} whose name may be updated via {@code wn/}.
      */
-    private void applyWorkoutEdits(String editLine, Workout workoutToEdit) throws GitSwoleException {
+    private void applyWorkoutEdits(String editLine, Workout workoutToEdit, Ui ui, WorkoutList workouts)
+                                    throws GitSwoleException {
         if (editLine == null || editLine.isBlank()) {
             return;
         }
@@ -279,11 +291,9 @@ public class EditCommand extends Command{
     private void printUpdatedWorkout(Ui ui, Workout workoutToEdit) {
         if (hasChanged) {
             ui.showMessage("Change Recorded! Edited Workout:");
-            ui.showLine();
             ui.printWorkout(workoutToEdit);
         } else {
             ui.showMessage("No Changes recorded!");
-            ui.showLine();
         }
     }
 }

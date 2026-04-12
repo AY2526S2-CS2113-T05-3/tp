@@ -6,6 +6,7 @@ import seedu.gitswole.assets.WorkoutList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -54,10 +55,12 @@ public class Ui {
      * @return The full command string entered by the user, or {@code null} at EOF.
      */
     public String readCommand() {
-        if (!scanner.hasNextLine()) {
-            return null;
+        try {
+            return scanner.nextLine();
+        } catch (NoSuchElementException e) {
+            showMessage("Ouch. Why bro? Please exit through the \"exit\" command next time!");
+            return "exit";
         }
-        return scanner.nextLine();
     }
 
     /**

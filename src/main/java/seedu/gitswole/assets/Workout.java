@@ -138,7 +138,7 @@ public class Workout {
      */
     public Exercise getExerciseByName(String exerciseToEditString) {
         for (Exercise e : exerciseList) {
-            if (exerciseToEditString.equals(e.getExerciseName())) {
+            if (exerciseToEditString.trim().equalsIgnoreCase(e.getExerciseName().trim())) {
                 return e;
             }
         }
