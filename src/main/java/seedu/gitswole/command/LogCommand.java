@@ -96,6 +96,13 @@ public class LogCommand extends Command {
             throw new GitSwoleException(GitSwoleException.ErrorType.NOT_FOUND, workoutName);
         }
 
+        if (workout.getNumOfExercises() == 0) {
+            LOGGER.log(Level.WARNING, "LogWorkout failed: Workout '{0}' has no exercises.", workoutName);
+            throw new GitSwoleException(GitSwoleException.ErrorType.DEFAULT,
+                "Cannot log \"" + workout.getWorkoutName() + "\" because it has no exercises! " +
+                "Add some first using: add e/EXERCISE w/" + workout.getWorkoutName());
+        }
+
         // SMART CHECK: Only write header if a session doesn't exist for today
         try {
             if (!historyStorage.hasSessionToday(workout.getWorkoutName())) {

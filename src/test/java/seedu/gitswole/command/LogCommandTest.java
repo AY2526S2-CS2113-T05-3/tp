@@ -68,6 +68,18 @@ class LogCommandTest {
     }
 
     @Test
+    @DisplayName("log w/WORKOUT — empty workout throws DEFAULT error")
+    void execute_emptyWorkout_throwsDefaultError() {
+        workouts.addWorkout(new Workout("empty"));
+        LogCommand cmd = new LogCommand("log w/empty", historyStub);
+        
+        GitSwoleException ex = assertThrows(GitSwoleException.class, () -> 
+            cmd.execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
+        assertTrue(ex.getMessage().contains("has no exercises"));
+    }
+
+    @Test
     @DisplayName("log e/EXERCISE — uses sticky session when w/ is omitted")
     void execute_stickySession_updatesCorrectWorkout() throws GitSwoleException {
         // Arrange: Start a push session
