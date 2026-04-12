@@ -119,6 +119,13 @@ Input:  add e/benchpress w/push
 Output: Your exercise has been successfully added! Looking swole g
 ```
 
+> **Note:** 
+> The `wt/`, `s/`, and `r/` flags are all optional and default to `0` when
+> omitted. However, stats are only shown in `list` when they have been explicitly set
+> to a non-zero value. An exercise added without stats will display only its name —
+> this is intentional, signalling that no targets have been configured yet.
+> Use `add e/EXERCISE w/WORKOUT wt/WEIGHT s/SETS r/REPS` to have stats appear in the listing.
+
 ---
 
 ### Feature 4: Delete Workout Session
