@@ -56,12 +56,6 @@ Total: **976 LoC** (319 functional) — primary files created include `LogListCo
 
 ---
 
-## Project Management
-
-* Kept integration tests (`text-ui-test/EXPECTED.TXT`) up to date across multiple PRs as the team's features evolved, preventing CI failures from accumulating.
-
----
-
 ## Documentation
 
 ### User Guide
