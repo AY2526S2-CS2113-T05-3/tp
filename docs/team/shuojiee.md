@@ -58,7 +58,7 @@ Total: **976 LoC** (319 functional) — primary files created include `LogListCo
 
 ---
 
-### Community
+## Community
 
 * Reviewed PR [#38](https://github.com/AY2526S2-CS2113-W10-3/tp/pull/38) by rpraveen7 (`fix-ci-errors`), resolving merge conflicts with upstream master to unblock the team's CI pipeline.
 
