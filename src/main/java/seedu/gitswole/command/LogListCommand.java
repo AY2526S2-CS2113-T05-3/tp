@@ -127,13 +127,13 @@ public class LogListCommand extends Command {
         String date = Parser.parseValue(response, "d/");
         if (date == null || date.isEmpty()) {
             throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND,
-                    "invalid command. format: loglist d/DATE");
+                    "Invalid command. Format: loglist d/DATE");
         }
 
         try {
             LocalDate.parse(date, DATE_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new GitSwoleException(GitSwoleException.ErrorType.INCOMPLETE_COMMAND,
+            throw new GitSwoleException(GitSwoleException.ErrorType.INVALID_FORMAT,
                     "Invalid date format. Expected dd-MM-yyyy (e.g. 10-04-2026)");
         }
 

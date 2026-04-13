@@ -204,4 +204,29 @@ class LogListCommandTest {
             () -> new LogListCommand("loglist d/24-03-2026", historyStub).execute(workouts, ui));
         assertEquals(GitSwoleException.ErrorType.DEFAULT, ex.getType());
     }
+
+    @Test
+    @DisplayName("loglist d/ with YYYY-MM-DD format throws INVALID_FORMAT")
+    void execute_dateWrongFormatYYYYMMDD_throwsInvalidFormat() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+                () -> new LogListCommand("loglist d/2026-04-10", historyStub).execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.INVALID_FORMAT, ex.getType());
+        assertTrue(ex.getMessage().contains("dd-MM-yyyy"));
+    }
+
+    @Test
+    @DisplayName("loglist d/ with gibberish value throws INVALID_FORMAT")
+    void execute_dateGibberishValue_throwsInvalidFormat() {
+        GitSwoleException ex = assertThrows(GitSwoleException.class,
+                () -> new LogListCommand("loglist d/notadate", historyStub).execute(workouts, ui));
+        assertEquals(GitSwoleException.ErrorType.INVALID_FORMAT, ex.getType());
+    }
+
+    @Test
+    @DisplayName("loglist d/ with valid dd-MM-yyyy does not throw")
+    void execute_dateValidFormat_doesNotThrow() throws GitSwoleException {
+        historyStub.dateEntries = List.of();
+        new LogListCommand("loglist d/30-03-2026", historyStub).execute(workouts, ui);
+        assertTrue(outContent.toString().contains("No logged sessions found for this date: 30-03-2026"));
+    }
 }

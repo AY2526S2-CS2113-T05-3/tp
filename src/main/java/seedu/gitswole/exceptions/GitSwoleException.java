@@ -17,6 +17,7 @@ public class GitSwoleException extends Exception {
         NOT_FOUND,
         NEG_INPUT,
         DUPLICATE,
+        INVALID_FORMAT,
         DEFAULT
     }
 
@@ -56,6 +57,8 @@ public class GitSwoleException extends Exception {
             return command;
         case DUPLICATE:
             return command;
+        case INVALID_FORMAT:
+            return "Invalid format: " + command;
         case DEFAULT:
             return command;
         default:
