@@ -72,7 +72,7 @@ Total: **976 LoC** (319 functional) — primary files created include `LogListCo
 ### Developer Guide
 
 * Documented the design and implementation of all three of my features (`AddCommand`, `MarkCommand`, `LogListCommand`).
-* Created the sequence diagram for `loglist` (`loglistSD.puml` / `loglistSD.png`), illustrating how `LogListCommand` retrieves and displays history by interacting with `HistoryStorage`.
+* Created the sequence diagram for `lqoglist` (`loglistSD.puml` / `loglistSD.png`), illustrating how `LogListCommand` retrieves and displays history by interacting with `HistoryStorage`.
 
 ---
 
