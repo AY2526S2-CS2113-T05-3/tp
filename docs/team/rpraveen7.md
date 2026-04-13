@@ -19,20 +19,30 @@ global view of all exercises across all sessions (`list all`).
 * **Justification:** Users need to quickly navigate their routines. A summary view helps find the right session, 
 while the detailed view provides the actual training data. "List all" serves as a quick inventory of the user's 
 entire exercise repertoire.
-* **Highlights:** Implementation uses a single command class that routes logic based on parsed flags. This minimizes 
-class bloat and centralizes display logic, ensuring consistency in how data is presented to the user.
+* **Technical Depth:** 
+    * **State-Aware Listing:** The command uses flag-based routing (`w/` vs `all`) to determine display depth. 
+    * **Status Integration:** For the `list` and `list w/WORKOUT` variations, the UI integrates completion 
+    status indicators (`[X]` or `[ ]`) directly into the output, allowing users to see progress at a glance.
+    * **Whitespace Tolerance:** The parser was specifically enhanced to trim and sanitize the `w/` input, 
+    making it resilient to leading/trailing spaces often entered on mobile-synced CLI environments.
 
 ---
 
 ### New Feature: Smart Workout Logging (`LogCommand`)
 
-* **What it does:** Enables real-time logging of training performance (weight, sets, reps). It introduces a 
-"sticky session" state where the app remembers the last workout name accessed, allowing subsequent exercise logs to 
-omit the workout flag.
-* **Justification:** Manual data entry during a workout should be as friction-less as possible. By remembering the 
-active session, the number of keystrokes required is significantly reduced, allowing the user to focus on their training.
-* **Highlights:** The implementation handles dual-state logic — it can either initialize a session (`log w/WORKOUT`) 
-or update specific exercise stats (`log e/EXERCISE`), providing a seamless flow for the user.
+* **What it does:** Enables real-time logging of daily training performance. It allows users to record 
+weights (`wt/`), sets (`s/`), reps (`r/`), and custom remarks (`remark/`) for any exercise.
+* **Justification:** To provide a friction-less gym experience, the command supports **"Sticky Sessions"**—after 
+starting a session (`log w/`), the app maintains an internal active state. This allows subsequent exercise updates 
+via `log e/` to omit the workout name entirely, minimizing typing during high-intensity training.
+* **Technical Depth:** 
+    * **Dual-State Logic:** The command dynamically switches between "Session Initialization" (writing a 
+    date-stamped header) and "Exercise Performance Logging" based on the presence of the `e/` flag.
+    * **Optional Field Inheritance:** The implementation allows for partial updates. If optional flags like 
+    `wt/` or `s/` are omitted, the command intelligently inherits the last known values from the workout 
+    template, preventing data loss while reducing mandatory input.
+    * **Terminal Remark Handling:** Implemented a specialized parser for the `remark/` flag to ensure it acts 
+    as a terminal input, allowing for multi-word comments without interfering with subsequent numeric flags.
 
 ---
 
@@ -69,10 +79,20 @@ integrity during execution.
 workout has already been started today. This prevents redundant header entries in `history.txt`.
     * *Example:* If a user logs an exercise, then logs another one later, both will be grouped under one 
   "Push Day" header for that date.
-* **Robust Input Validation & Error Handling:** Enhanced `LogCommand` to catch incomplete commands or missing workout 
-context, throwing custom `GitSwoleException` with helpful usage instructions.
-    * *Example:* Typing `log e/` without a name triggers a warning and shows the correct 
-  `log e/EXERCISE [w/WORKOUT]...` format.
+* **Robust Data Integrity & Overflow Protection:** Refactored the `Parser` to implement `parseAndValidateInt`, 
+which prevents numeric overflow from large inputs (e.g., `wt/9999999`) that previously corrupted the storage files. 
+Added realistic physical limits (e.g., 1000kg) to maintain data quality.
+* **Smart Context-Aware Error Guidance:** Implemented a global exercise search mechanism in `LogCommand`. 
+If a user attempts to log an exercise under the wrong session, the app proactively suggests the correct workout 
+(e.g., *"Did you mean to log this under Push Day?"*).
+* **Strict Command & Flag Validation:** Enhanced the parser to detect unrecognized flags (e.g., `wol/` instead 
+of `wt/`) and resolve flag collisions (e.g., `remark/` bleeding into other fields). This prevents typos from 
+being silently ignored and ensures every command is executed exactly as intended.
+* **Header Collision Resolution in Storage:** Fixed a critical bug in `HistoryStorage` where shorter workout 
+names (e.g., "ARM") would incorrectly match longer ones (e.g., "WARM") during history scans. Implemented precise 
+suffix-matching to ensure historical logs are never misattributed.
+* **Operational Guardrails:** Added validation to prevent the creation of empty workout sessions or marking 
+workouts without exercises as "done," ensuring a consistent "Define -> Log" workflow.
 * **Case-Insensitive Input Handling:** Optimized both `ListCommand` and `LogCommand` to handle user input 
 case-insensitively, reducing friction for CLI users.
     * *Example:* Both `list w/puSh dAy` and `log w/PUSH DAY` will correctly target the "Push Day" workout session.
