@@ -305,15 +305,14 @@ exit
 
 ### Feature 12: Mark / Unmark Workout
 
-**Purpose:** Marks or unmarks a workout session as completed.
+**Purpose:** Flags a workout as completed or incomplete to track your weekly progress.
 
 **Format:**
-```
-mark w/WORKOUT
-mark w/INDEX
-unmark w/WORKOUT
-unmark w/INDEX
-```
+
+`mark w/WORKOUT_NAME` or `mark w/INDEX`
+
+`unmark w/WORKOUT_NAME` or `unmark w/INDEX`
+
 
 **Example:**
 ```
@@ -515,9 +514,8 @@ loglist
 loglist w/WORKOUT_NAME
 loglist d/DATE
 ```
-* `loglist` alone prints every logged entry across all dates, in chronological order.
-* `loglist w/WORKOUT_NAME` filters the history to only entries belonging to that workout.
-* `loglist d/DATE` filters the history to all entries logged on a specific date. Date must follow the `dd-MM-yyyy` format.
+**Date Format:** `dd-MM-yyyy` (e.g., 25-12-2025).
+* Dates are strictly validated; invalid calendar dates (like 30-02-2024) will return an error.
 
 **Example** - View complete history:
 ```

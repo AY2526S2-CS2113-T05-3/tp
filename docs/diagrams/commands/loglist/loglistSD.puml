@@ -1,40 +1,47 @@
 @startuml
 title Sequence Diagram: LogListCommand
 
+' Standard scaling parameters to prevent clipping
+skinparam maxMessageSize 150
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+participant "Caller" as Caller
 participant ":Parser" as Parser
-participant "l:LogListCommand" as LogListCommand
-participant ":HistoryStorage" as HistoryStorage
+participant "l:LogListCommand" as Command
+participant ":HistoryStorage" as Storage
 participant ":Ui" as Ui
 
-[-> Parser : parse("loglist")
+Caller -> Parser : parse("loglist")
 activate Parser
-create LogListCommand
-Parser -> LogListCommand : new LogListCommand(response)
-[<-- Parser : l
+create Command
+Parser -> Command : new LogListCommand(response)
+Parser --> Caller : l
 deactivate Parser
 
-[-> LogListCommand : execute()
-activate LogListCommand
+Caller -> Command : execute(workouts, ui)
+activate Command
 
-LogListCommand -> HistoryStorage : loadHistory()
-activate HistoryStorage
-HistoryStorage --> LogListCommand : logs: ArrayList<String>
-deactivate HistoryStorage
+Command -> Storage : loadHistory()
+activate Storage
+Storage --> Command : logs: ArrayList<String>
+deactivate Storage
 
 alt logs is empty
-    LogListCommand -> Ui : showError("No history found")
+    Command -> Ui : showError("No history found")
     activate Ui
-    Ui --> LogListCommand
+    Ui --> Command
     deactivate Ui
 else
     loop for each log in logs
-        LogListCommand -> Ui : showMessage(log)
+        Command -> Ui : showMessage(log)
         activate Ui
-        Ui --> LogListCommand
+        Ui --> Command
         deactivate Ui
     end
 end
 
-[<-- LogListCommand
-deactivate LogListCommand
+Command --> Caller
+deactivate Command
+
 @enduml

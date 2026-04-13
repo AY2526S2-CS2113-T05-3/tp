@@ -499,36 +499,22 @@ The following sequence diagram illustrates how the `ListCommand` determines the 
 
 ### Mark and Unmark Workout Feature (`MarkCommand`)
 
-The mark feature lets users track their weekly training progress by flagging workouts as done or not done. At a glance, users can see which workouts they have completed and which ones they still have left, without needing to remember manually.
-
-**How it works:** It supports two operations:
-
-- `mark w/WORKOUT` - marks the named workout as done
-- `unmark w/WORKOUT` - marks the named workout as not done
-
-**Examples:**
-```
-mark w/Push Day
-unmark w/Push Day
-```
-
-
-The completion status is reflected immediately when running `list`, which displays a done/not done indicator alongside each workout name, giving users a clear overview of what remains for the week.
+The `MarkCommand` allows users to track their weekly training progress by flagging workout sessions as completed (`[X]`) or incomplete (`[ ]`).
 
 #### Architecture and Component Level Design
+This command is implemented to handle two related intents—marking as done and marking as not done—within a single class based on the keyword parsed by the `Parser`.
 
-1. **Parser:** Reads the raw input, extracts the command word `mark` or `unmark`, and returns a new `MarkCommand(response)` with the full raw string as the argument.
-2. **MarkCommand:** The main loop calls `MarkCommand#execute()`, which parses the `w/` flag to identify the target workout and sets its completion status to `true` (mark) or `false` (unmark).
-3. **WorkoutList:** The command calls `WorkoutList#getWorkoutByName()` to locate the target. A `GitSwoleException` is thrown if the workout does not exist.
-4. **Storage:** `GitSwole` calls `Storage#saveWorkouts()` after execution to persist the updated completion status.
-5. **Ui:** The result is confirmed to the user via `Ui#showMessage()`.
+1.  **Status Determination:** The `MarkCommand` class identifies the first word of the raw input to set a boolean `isDone` flag. `mark` triggers a `true` state, while `unmark` triggers a `false` state.
+2.  **Defensive Target Lookup:** To enhance user experience, the command supports a dual-lookup strategy for identifying the target workout:
+    *   **By Index:** It attempts to parse the value after the `w/` flag as an integer. If successful, it retrieves the workout from the `WorkoutList` via its current position in the displayed list using `WorkoutList#getWorkoutByIndex`.
+    *   **By Name:** If an integer parse fails (`NumberFormatException`), the command treats the input as a `String` name and performs a case-insensitive lookup in the list of workouts via `WorkoutList#getWorkoutByName`.
+3.  **Business Logic Enforcement:** The command enforces data integrity through the following checks:
+    *   **Empty Workout Guard:** If the user attempts to mark a workout as "done" while it contains zero exercises, a `GitSwoleException` is thrown. This ensures progress is only recorded for sessions that have defined content.
+    *   **Redundancy Check:** If the target workout is already in the requested state (e.g., marking a workout as "done" that is already marked), the command notifies the user via the `Ui` without performing redundant operations.
+4.  **Immediate Persistence:** Upon a successful toggle, the command returns control to the main loop in `GitSwole.java`, which immediately calls `saveWorkouts()` to persist the updated completion status to disk.
 
-#### Sequence Diagrams
-
-The following sequence diagram illustrates how the `MarkCommand` works:
-
+#### Sequence Diagram
 <img src="diagrams/commands/mark/MarkCommandSD.png" width="522" />
-
 
 ---
 
@@ -583,43 +569,22 @@ The following diagram details the internal "Smart Overwriting" mechanism within 
 
 ---
 
-### History Retrieval (`LogList`)
+### History Retrieval Feature (`LogListCommand`)
 
-#### Implementation
+The `LogListCommand` serves as the retrieval interface for the `HistoryStorage` component, allowing users to review their chronologically logged training data.
 
-The `LogList` mechanism is centered around the `LogListCommand` class. It acts as the logic controller that bridges the `HistoryStorage` component and the `Ui` component.
+**Architecture and Component Level Design**
 
-##### Implementation Details: LogList Filter Logic
-The `LogListCommand` utilizes a strategy-based approach to filter history. Depending on the flags detected in the user's raw input string, it routes the request to different specialized methods within `HistoryStorage`. This prevents the command class from becoming bloated with file-parsing logic.
+The `LogListCommand` acts as a high-level controller that routes user requests to specialized retrieval methods in the storage layer.
 
-*   **Level 1 (Architecture):** The `LogListCommand` acts as a high-level controller. It requests a `List<String>` of formatted entries from the `Storage` layer and passes that list directly to the `UI` layer for rendering. This maintains a strict separation of concerns.
-*   **Level 2 (Component):** Inside the `execute()` method, the command performs flag detection:
-    *   If the `d/` flag is detected: It extracts the date string and calls `historyStorage.getEntriesByDate(date)`.
-    *   If the `w/` flag is detected: It extracts the workout name and calls `historyStorage.getEntriesByWorkout(name)`.
-    *   Otherwise: It defaults to `historyStorage.getAllEntries()` to show the complete history.
+1.  **Strategy-Based Filtering:** The command determines the filtering criteria by inspecting the flags extracted from the user's raw input:
+    *   **Date Filter:** If the `d/` flag is present, the command validates the date using a strict `ResolverStyle.STRICT` formatter (`dd-MM-uuuu`). This ensures invalid calendar dates (e.g., "30-02-2026") are caught before the lookup begins. It then calls `historyStorage.getEntriesByDate()`.
+    *   **Workout Filter:** If the `w/` flag is present, the command extracts the workout name and calls `historyStorage.getEntriesByWorkout()`.
+    *   **Comprehensive View:** If no flags are provided, it defaults to retrieving all entries sorted by date using `historyStorage.getAllEntries()`.
+2.  **Decoupled Architecture (Dependency Injection):** For testing purposes, the class provides an overloaded constructor: `LogListCommand(String response, HistoryStorage historyStorage)`. This allows the JUnit test suite to inject a mock or stubbed `HistoryStorage`, enabling deterministic testing without relying on the actual `history.txt` file on disk.
+3.  **Data Flow:** The command requests data as a `List<String>` of formatted entries. It then iterates through this list to display messages via the `Ui` component. This ensures that the command does not need to handle complex file parsing or formatting logic internally, maintaining a strict separation of concerns between logic and storage.
 
-##### Design Decision: Dependency Injection for Testing
-A key design choice was the implementation of an overloaded constructor:
-`LogListCommand(String response, HistoryStorage historyStorage)`.
-
-This allows for **Dependency Injection**. In the production environment, the app uses the default constructor which initializes a real file-linked `HistoryStorage`. During testing, the JUnit suite injects a `HistoryStorageStub`. This ensures that unit tests are:
-1.  **Isolated:** Tests do not fail if the actual `history.txt` file is missing or corrupted.
-2.  **Deterministic:** The test always receives the exact same mock data, making it reliable across different developer machines.
-
-#### Design Considerations
-
-**Aspect: Data Retrieval Strategy**
-
-*   **Alternative 1 (Current Choice): On-demand File Reading.**
-    *   **Pros:** Minimal memory footprint. The application does not need to store years of history in RAM; it only reads the file when the user explicitly asks for it.
-    *   **Cons:** Incurs a small File I/O overhead each time the command is run.
-    *   **Reason for Choosing:** Since `loglist` is a diagnostic command rather than a high-frequency entry command (like `add`), the trade-off of a few milliseconds of disk access for significantly lower RAM usage is optimal for a CLI tool.
-
-
-#### Sequence Diagram
-
-The diagram below shows how the components interact when a user requests to see their workout history.
-
+#### Sequence Diagram:
 <img src="diagrams/commands/loglist/loglistSD.png" width="681" />
 
 ---
