@@ -329,8 +329,7 @@ The user specifies the target by its position number in the list (e.g. `delete 1
 
 This diagram shows the sequence in which the delete command is entered.
 
-<img src="diagrams/commands/delete/deleteSD-Sequence_Diagram__DeleteCommand.png" width="950" />
-
+<img src="diagrams/commands/delete/deleteSD-Sequence_Diagram__DeleteCommand.png" alt="Sequence diagram showing the execution flow of the DeleteCommand" width="950"/>
 ---
 
 ### Edit Workout and Exercise Feature (`EditCommand`)
