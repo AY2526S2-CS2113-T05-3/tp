@@ -13,42 +13,32 @@ Given below are my contributions to the project.
 
 ### New Feature: Core Application Architecture
 
-* **What it does:** Establishes the foundational structure of the application - the `GitSwole` main class,
-  the abstract `Command` base class, the `Parser`, the `Ui`, and the `Assets` layer (`WorkoutList`, `Workout`, `Exercise`).
-* **Justification:** A clean separation of tasks from the start allows each team member to independently
-  implement commands. The abstract `Command` class enforces a consistent interface (`execute`, `isExit`) that every
-  command must implement, making the codebase scalable and predictable.
-* **Highlights:**
-    * The `GitSwole` main class manages the application lifecycle:
-      * setup, the main read-execute loop,
-      * load-on-startup, and 
-      * save-on-command → behind a clean `run()` entry point.
-    * `Parser` exposes `readResponse`, which delegates to `parseCommand` to validate the command keyword
-      and resolve it to a `CommandType` via a `HashMap<String, CommandType>`.
-      The `HashMap` allows O(1) keyword lookup and avoids fragile positional-array indexing.
-      Once resolved, the corresponding `Command` subclass is constructed and returned.
-    * `Ui` decouples all terminal I/O from command logic, making commands independently testable.
-    * The `Assets` layer (`WorkoutList`, `Workout`, `Exercise`) models the domain cleanly, with
-      lookup methods such as `getWorkoutByName` and `getExerciseByName` that are used across multiple commands.
+**What it does:** Sets up the foundational classes - `GitSwole`, `Command`, `Parser`, `Ui`, and the assets layer 
+(`WorkoutList`, `Workout`, `Exercise`).
 
+**Justification:** Clean separation of concerns lets team members implement commands independently. 
+The abstract `Command` class enforces a consistent `execute`/`isExit` interface across all commands.
+
+**Highlights:**
+- `GitSwole` manages the full lifecycle: setup, read-execute loop, load-on-startup, and save-on-command.
+- `Parser` resolves command keywords to `CommandType` via a `HashMap` (O(1) lookup), then constructs and 
+returns the appropriate `Command` subclass.
+- `Ui` centralises terminal I/O, keeping commands independently testable.
+- The assets layer exposes shared lookup methods (`getWorkoutByName`, `getExerciseByName`) used across commands.
 ---
 
 ### New Feature: Workout and Exercise Editing (`EditCommand`)
 
-* **What it does:** Allows users to modify existing workouts and exercises in-place via a flag-based
-  single-line input. Supports two modes:
-    * `edit w/WORKOUT_NAME` - renames an existing workout session.
-    * `edit w/WORKOUT_NAME e/EXERCISE_NAME` - edits any combination of workout name, exercise name,
-      weight, sets, and reps in a single command (e.g. `wn/LegDay en/Squat wt/120 s/4 r/8`).
-* **Justification:** Users frequently need to update their training plans and might often encounter typos. A destructive
-  delete-and-re-add workflow is too troublesome, so we used in-place editing with selective field updates.
-* **Highlights:**
-    * Each numeric field (`wt/`, `s/`, `r/`) is independently optional - fields omitted from the edit
-      line are left unchanged, avoiding unintended overwrites.
-    * Invalid input such as weights, sets and reps being too large, or negative, is picked by the Command and alerts the user to retry. 
-    * The command tracks a `hasChanged` flag and gives distinct feedback depending on whether any field
-      was actually modified, preventing false confirmation messages.
+**What it does:** Edits existing workouts and exercises in-place via flag-based input. Supports two modes:
+- `edit w/WORKOUT_NAME` — renames a workout.
+- `edit w/WORKOUT_NAME e/EXERCISE_NAME` — edits any combination of workout name, exercise name, weight, sets, and reps (e.g. `wn/LegDay en/Squat wt/120 s/4 r/8`).
 
+**Justification:** A delete-and-re-add workflow is too disruptive for routine updates and typo fixes, so in-place editing with selective field updates was used instead.
+
+**Highlights:**
+- Numeric fields (`wt/`, `s/`, `r/`) are independently optional — omitted fields are left unchanged.
+- Invalid values (negative, out-of-range) are caught and the user is prompted to retry.
+- A `hasChanged` flag tracks whether any field was actually modified, preventing false confirmation messages.
 ---
 
 ### Project Management
@@ -70,6 +60,20 @@ Given below are my contributions to the project.
 
 ---
 
+### Code Contributed
+
+[RepoSense Link](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=vet3whale)
+
+---
+
+### Community
+
+* Reviewed teammates PRs before merging.
+* Reported bugs and suggestions for other teams in the class.
+* Created Issues and Milestone tracker for ease of workflow tracking.
+* 
+---
+
 ### Documentation
 
 #### User Guide
@@ -85,18 +89,3 @@ Given below are my contributions to the project.
 * Created PlantUML sequence diagrams illustrating the `EditCommand` execution flow for both
   the edit-workout and edit-exercise scenarios.
 * Developed Instruction Manual with an expected workflow section.
-
----
-
-### Code Contributed
-
-[RepoSense Link](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=vet3whale)
-
-
----
-
-### Community
-
-* Reviewed teammates PRs before merging.
-* Reported bugs and suggestions for other teams in the class.
-* Created Issues and Milestone tracker for ease of workflow tracking.
