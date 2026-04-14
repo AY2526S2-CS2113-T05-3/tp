@@ -13,34 +13,25 @@ Given below are my contributions to the project.
 
 ### New Feature: Multi-Tiered Listing Mechanism (`ListCommand`)
 
-* **What it does:** provides data at three granularities: a summary of workout sessions (`list`), a detailed 
-view of a specific workout (`list w/WORKOUT`), and a global exercise inventory (`list all`).
-* **Justification:** Optimizes routine navigation by allowing users to switch between high-level progress 
-tracking and granular training data via a single, flag-routed command.
-* **Highlights:** Implementation uses flag-based routing to determine display depth. Integrates completion 
-status indicators (`[X]` or `[ ]`) and handles sanitized, whitespace-resilient input for reliable CLI performance.
+* **What it does:** Provides data at three granularities: summary (`list`), workout-specific (`list w/WORKOUT`), and global inventory (`list all`).
+* **Justification:** Optimizes navigation via a single command, allowing rapid switching between routines and granular data.
+* **Highlights:** Uses flag-routing for display depth. Integrates completion status (`[X]/[ ]`) and handles whitespace-resilient input.
 
 ---
 
 ### New Feature: Smart Workout Logging (`LogCommand`)
 
-* **What it does:** Records daily performance via `log e/EXERCISE` with support for weight (`wt/`), 
-sets (`s/`), reps (`r/`), and `remark/`. It also manages session state through `log w/WORKOUT`.
-* **Justification:** Minimizes friction via **"Sticky Sessions"**—remembering active workouts to allow 
-logs to omit the workout flag hence supporting partial updates through field inheritance from templates.
-* **Highlights:** Uses dual-state logic to manage session headers vs. exercise updates. Includes a specialized 
-terminal parser for `remark/` to support multi-word strings and prevents numeric overflows via strict validation.
+* **What it does:** Records training via `log e/EXERCISE` with optional flags (`wt/`, `s/`, `r/`, `remark/`). Supports **"Sticky Sessions"**—starting a session with `log w/WORKOUT` allows subsequent logs to omit the workout flag.
+* **Justification:** Minimizes training friction by reducing repetitive input while supporting partial updates via template inheritance for omitted fields.
+* **Highlights:** Manages dual-state logic (sessions vs. updates). Uses specialized parsing for `remark/` and prevents numeric overflows via strict validation.
 
 ---
 
 ### New Feature: Persistent History Storage (`HistoryStorage`)
 
-* **What it does:** Manages the `history.txt` file, recording every training session with a "Smart Overwriting" 
-mechanism to handle user typos without creating duplicates.
-* **Justification:** Essential for maintaining a clean chronological log. It ensures re-entering a log corrects the 
-existing entry for the day, providing a reliable reference for performance tracking over time.
-* **Highlights:** Identifies session blocks by date and workout name, performing surgical updates within the file. 
-Uses precise suffix-matching to prevent collisions between similar workout names (e.g., "ARM" vs "WARM").
+* **What it does:** Manages `history.txt`, recording training sessions with "Smart Overwriting" to prevent duplicate entries from user typos.
+* **Justification:** Essential for maintaining a clean chronological log. Ensures re-entering logs corrects the day's existing entry.
+* **Highlights:** Identifies session blocks by date/name for surgical updates. Uses precise matching to prevent workout name collisions.
 
 ---
 
